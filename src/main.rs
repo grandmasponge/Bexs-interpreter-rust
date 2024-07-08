@@ -65,4 +65,5 @@ fn tokenize(contents: &str) {
         let token = Token::output(char);
         println!("{token}");
     }
+    println!("EOF  null");
 }
