@@ -9,6 +9,13 @@ enum Token {
     RightParen,
     LeftBrace,
     RightBrace,
+    Comma,
+    Dot,
+    Minus,
+    Add,
+    Star,
+    Plus,
+    SemiColon,
     EOF,
 }
 
@@ -19,6 +26,12 @@ impl Token {
             ')' => Token::RightParen,
             '{' => Token::LeftBrace,
             '}' => Token::RightBrace,
+            ',' => Token::Comma,
+            '.' => Token::Dot,
+            '-' => Token::Minus,
+            '+' => Token::Plus,
+            ';' => Token::SemiColon,
+            '*' => Token::Star,
             _ => Token::EOF,
         }
     }
@@ -31,6 +44,12 @@ impl std::fmt::Display for Token {
             Token::RightParen => write!(f, "RIGHT_PAREN ) null"),
             Token::LeftBrace => write!(f, "LEFT_BRACE {{ null"),
             Token::RightBrace => write!(f, "RIGHT_BRACE }} null"),
+            Token::Comma => write!(f, "COMMA , null"),
+            Token::Dot => write!(f, "DOT . null"),
+            Token::Minus => write!(f, "MINUS - null"),
+            Token::Plus => write!(f, "PLUS + null"),
+            Token::SemiColon => write!(f, "SEMICOLON ; null"),
+            Token::Star => write!(f, "STAR * null"),
             Token::EOF => write!(f, "EOF  null"),
             _ => write!(f, "huh"),
         }
