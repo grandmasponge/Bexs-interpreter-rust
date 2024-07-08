@@ -1,6 +1,35 @@
+use core::fmt;
+use core::panic;
 use std::env;
 use std::fs;
 use std::io::{self, Write};
+
+enum Token {
+    LeftParen,
+    RightParen,
+    EOF,
+}
+
+impl Token {
+    fn output(tok: char) -> Token {
+        match tok {
+            '(' => Token::LeftParen,
+            ')' => Token::RightParen,
+            _ => Token::EOF,
+        }
+    }
+}
+
+impl std::fmt::Display for Token {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Token::LeftParen => write!(f, "LEFT_PAREN ( null"),
+            Token::RightParen => write!(f, "RIGHT_PAREN ) null"),
+            Token::EOF => write!(f, "EOF  null"),
+            _ => write!(f, "huh"),
+        }
+    }
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -21,16 +50,19 @@ fn main() {
                 writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
                 String::new()
             });
-
-            if !file_contents.is_empty() {
-                panic!("Scanner not implemented");
-            } else {
-                println!("EOF  null"); // Placeholder, remove this line when implementing the scanner
-            }
+            tokenize(&file_contents);
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
             return;
         }
+    }
+}
+
+fn tokenize(contents: &str) {
+    let chars = contents.chars();
+    for char in chars {
+        let token = Token::output(char);
+        println!("{token}");
     }
 }
