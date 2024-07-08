@@ -7,6 +7,8 @@ use std::io::{self, Write};
 enum Token {
     LeftParen,
     RightParen,
+    LeftBrace,
+    RightBrace,
     EOF,
 }
 
@@ -15,6 +17,8 @@ impl Token {
         match tok {
             '(' => Token::LeftParen,
             ')' => Token::RightParen,
+            '{' => Token::LeftBrace,
+            '}' => Token::RightBrace,
             _ => Token::EOF,
         }
     }
@@ -25,6 +29,8 @@ impl std::fmt::Display for Token {
         match self {
             Token::LeftParen => write!(f, "LEFT_PAREN ( null"),
             Token::RightParen => write!(f, "RIGHT_PAREN ) null"),
+            Token::LeftBrace => write!(f, "LEFT_BRACE {{ null"),
+            Token::RightBrace => write!(f, "RIGHT_BRACE }} null"),
             Token::EOF => write!(f, "EOF  null"),
             _ => write!(f, "huh"),
         }
