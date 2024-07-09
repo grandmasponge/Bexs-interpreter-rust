@@ -1,5 +1,6 @@
 use core::fmt;
 use core::panic;
+use std::char::ParseCharError;
 use std::env;
 use std::fs;
 use std::io::stderr;
@@ -92,6 +93,36 @@ impl<'a> Lexer<'a> {
                         tokens.push(Token::newToken(TokenType::Bang, char.to_string(), None));
                     }
                 }
+                '<' => {
+                    let mut peeker = characters.clone().peekable();
+                    if peeker.next() == Some('=') {
+                        tokens.push(Token::newToken(
+                            TokenType::LessThan_EQUALS,
+                            "<=".to_string(),
+                            None,
+                        ));
+                        characters.next();
+                    } else {
+                        tokens.push(Token::newToken(TokenType::LessThan, char.to_string(), None));
+                    }
+                }
+                '>' => {
+                    let mut peeker = characters.clone().peekable();
+                    if peeker.next() == Some('=') {
+                        tokens.push(Token::newToken(
+                            TokenType::GreaterThan_EQUALS,
+                            ">=".to_string(),
+                            None,
+                        ));
+                        characters.next();
+                    } else {
+                        tokens.push(Token::newToken(
+                            TokenType::GreaterThan,
+                            char.to_string(),
+                            None,
+                        ));
+                    }
+                }
                 _ => {
                     exitcode = 65;
                     let error = TokenError::new(
@@ -149,6 +180,10 @@ enum TokenType {
     SemiColon,
     Bang,
     Bang_EQUAL,
+    LessThan,
+    LessThan_EQUALS,
+    GreaterThan,
+    GreaterThan_EQUALS,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
