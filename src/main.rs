@@ -12,29 +12,52 @@ enum Token {
     Comma,
     Dot,
     Minus,
-    Add,
     Star,
     Plus,
     SemiColon,
     EOF,
+    NewLine,
+}
+
+struct TokenError {
+    msg: String,
+    line: i32,
+}
+
+impl TokenError {
+    fn new(msg: String, line: i32) -> Self {
+        Self { msg, line }
+    }
+}
+
+impl std::fmt::Display for TokenError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "[line {}] Error: {} ", self.line, self.msg)
+    }
 }
 
 impl Token {
-    fn output(tok: char) -> Token {
+    fn output(tok: char, line: i32) -> Result<Token, TokenError> {
         match tok {
-            '(' => Token::LeftParen,
-            ')' => Token::RightParen,
-            '{' => Token::LeftBrace,
-            '}' => Token::RightBrace,
-            ',' => Token::Comma,
-            '.' => Token::Dot,
-            '-' => Token::Minus,
-            '+' => Token::Plus,
-            ';' => Token::SemiColon,
-            '*' => Token::Star,
-            _ => Token::EOF,
+            '(' => Ok(Token::LeftParen),
+            ')' => Ok(Token::RightParen),
+            '{' => Ok(Token::LeftBrace),
+            '}' => Ok(Token::RightBrace),
+            ',' => Ok(Token::Comma),
+            '.' => Ok(Token::Dot),
+            '-' => Ok(Token::Minus),
+            '+' => Ok(Token::Plus),
+            ';' => Ok(Token::SemiColon),
+            '*' => Ok(Token::Star),
+            '\n' => Ok(Token::NewLine),
+            _ => Err(TokenError::new(
+                format!("Unexpected charater: {}", tok),
+                line,
+            )),
         }
     }
+
+    fn PrintOutput() {}
 }
 
 impl std::fmt::Display for Token {
@@ -51,7 +74,7 @@ impl std::fmt::Display for Token {
             Token::SemiColon => write!(f, "SEMICOLON ; null"),
             Token::Star => write!(f, "STAR * null"),
             Token::EOF => write!(f, "EOF  null"),
-            _ => write!(f, "huh"),
+            _ => write!(f, ""),
         }
     }
 }
@@ -85,10 +108,18 @@ fn main() {
 }
 
 fn tokenize(contents: &str) {
+    let mut line: i32 = 1;
     let chars = contents.chars();
     for char in chars {
-        let token = Token::output(char);
-        println!("{token}");
+        let token = Token::output(char, line);
+        match token {
+            Ok(tok) => {
+                println!("{}", tok);
+            }
+            Err(e) => {
+                println!("{}", e);
+            }
+        }
     }
     println!("EOF  null");
 }
