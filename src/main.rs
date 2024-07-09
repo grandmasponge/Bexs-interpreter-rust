@@ -130,6 +130,7 @@ impl<'a> Lexer<'a> {
                         //omgeh we have a comment
                         while let Some(end) = &characters.next() {
                             if end == &'\n' {
+                                self.line += 1;
                                 break;
                             }
                         }
