@@ -2,6 +2,7 @@ use core::fmt;
 use core::panic;
 use std::env;
 use std::fs;
+use std::io::stderr;
 use std::io::stdout;
 use std::io::{self, Write};
 use std::iter::Peekable;
@@ -85,7 +86,7 @@ impl<'a> Lexer<'a> {
                         self.line,
                         65,
                     );
-                    println!("{error}");
+                    writeln!(stderr(), "{error}");
                 }
             };
         }
