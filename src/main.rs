@@ -2,6 +2,7 @@ use core::fmt;
 use core::panic;
 use std::env;
 use std::fs;
+use std::io::stdout;
 use std::io::{self, Write};
 use std::process::exit;
 
@@ -80,8 +81,7 @@ impl std::fmt::Display for Token {
             Token::Plus => write!(f, "PLUS + null"),
             Token::SemiColon => write!(f, "SEMICOLON ; null"),
             Token::Star => write!(f, "STAR * null"),
-            Token::EOF => write!(f, "EOF  null"),
-            _ => write!(f, ""),
+            _ => write!(f, "EOF  null"),
         }
     }
 }
@@ -129,5 +129,5 @@ fn tokenize(contents: &str) {
             }
         }
     }
-    println!("EOF  null");
+    writeln!(stdout(), "EOF null");
 }
