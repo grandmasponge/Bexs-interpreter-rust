@@ -56,7 +56,6 @@ impl Token {
             '+' => Ok(Token::Plus),
             ';' => Ok(Token::SemiColon),
             '*' => Ok(Token::Star),
-            '\n' => Ok(Token::NewLine),
             _ => Err(TokenError::new(
                 format!("Error: Unexpected character: {}", tok),
                 line,
@@ -105,7 +104,9 @@ fn main() {
                 writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
                 String::new()
             });
-            tokenize(&file_contents);
+            let result = tokenize(&file_contents);
+            println!("EOF  null");
+            exit(result)
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
@@ -114,8 +115,9 @@ fn main() {
     }
 }
 
-fn tokenize(contents: &str) {
+fn tokenize(contents: &str) -> i32 {
     let mut line: i32 = 1;
+    let mut exitCode = 0;
     let chars = contents.chars();
     for char in chars {
         let token = Token::output(char, line);
@@ -124,10 +126,10 @@ fn tokenize(contents: &str) {
                 println!("{}", tok);
             }
             Err(e) => {
-                writeln!(io::stderr(), "{}", e);
-                exit(e.exitcode);
+                writeln!(io::stderr(), "{}", e).unwrap();
+                exitCode = e.exitcode;
             }
         }
     }
-    writeln!(stdout(), "EOF null");
+    exitCode
 }
