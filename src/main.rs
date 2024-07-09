@@ -79,6 +79,19 @@ impl<'a> Lexer<'a> {
                         tokens.push(Token::newToken(TokenType::EQUAL, char.to_string(), None));
                     }
                 }
+                '!' => {
+                    let mut peeker = characters.clone().peekable();
+                    if peeker.next() == Some('=') {
+                        tokens.push(Token::newToken(
+                            TokenType::Bang_EQUAL,
+                            "!=".to_string(),
+                            None,
+                        ));
+                        characters.next();
+                    } else {
+                        tokens.push(Token::newToken(TokenType::Bang, char.to_string(), None));
+                    }
+                }
                 _ => {
                     exitcode = 65;
                     let error = TokenError::new(
@@ -134,6 +147,8 @@ enum TokenType {
     Star,
     Plus,
     SemiColon,
+    Bang,
+    Bang_EQUAL,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
@@ -177,7 +192,9 @@ impl std::fmt::Display for TokenType {
             TokenType::SemiColon => write!(f, "SEMICOLON"),
             TokenType::Star => write!(f, "STAR"),
             TokenType::EQUAL => write!(f, "EQUAL"),
-            &TokenType::EQUAL_EQUAL => write!(f, "EQUAL_EQUAL"),
+            TokenType::EQUAL_EQUAL => write!(f, "EQUAL_EQUAL"),
+            TokenType::Bang => write!(f, "BANG"),
+            TokenType::Bang_EQUAL => write!(f, "BANG_EQUAL"),
             _ => write!(f, "EOF"),
         }
     }
