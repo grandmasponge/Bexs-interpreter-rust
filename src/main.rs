@@ -38,7 +38,7 @@ impl TokenError {
 
 impl std::fmt::Display for TokenError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "[line {}] Error: {} ", self.line, self.msg)
+        write!(f, "[line {}] {}", self.line, self.msg)
     }
 }
 
@@ -57,7 +57,7 @@ impl Token {
             '*' => Ok(Token::Star),
             '\n' => Ok(Token::NewLine),
             _ => Err(TokenError::new(
-                format!("Unexpected charater: {}", tok),
+                format!("Error: Unexpected character: {}", tok),
                 line,
                 65,
             )),
