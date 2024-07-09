@@ -37,6 +37,7 @@ impl<'a> Lexer<'a> {
                 '\n' => {
                     self.line += 1;
                 }
+                ' ' | '\r' | '\t' => {}
                 '(' => tokens.push(Token::newToken(
                     TokenType::LeftParen,
                     char.to_string(),
