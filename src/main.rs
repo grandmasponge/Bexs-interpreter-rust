@@ -3,6 +3,7 @@ use core::panic;
 use std::env;
 use std::fs;
 use std::io::{self, Write};
+use std::process::exit;
 
 enum Token {
     LeftParen,
@@ -22,11 +23,16 @@ enum Token {
 struct TokenError {
     msg: String,
     line: i32,
+    exitcode: i32,
 }
 
 impl TokenError {
-    fn new(msg: String, line: i32) -> Self {
-        Self { msg, line }
+    fn new(msg: String, line: i32, exitcode: i32) -> Self {
+        Self {
+            msg,
+            line,
+            exitcode,
+        }
     }
 }
 
@@ -53,6 +59,7 @@ impl Token {
             _ => Err(TokenError::new(
                 format!("Unexpected charater: {}", tok),
                 line,
+                65,
             )),
         }
     }
@@ -118,6 +125,7 @@ fn tokenize(contents: &str) {
             }
             Err(e) => {
                 println!("{}", e);
+                exit(e.exitcode);
             }
         }
     }
