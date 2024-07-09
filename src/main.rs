@@ -230,6 +230,10 @@ impl std::fmt::Display for TokenType {
             TokenType::EQUAL_EQUAL => write!(f, "EQUAL_EQUAL"),
             TokenType::Bang => write!(f, "BANG"),
             TokenType::Bang_EQUAL => write!(f, "BANG_EQUAL"),
+            TokenType::GreaterThan => write!(f, "GREATER"),
+            TokenType::GreaterThan_EQUALS => write!(f, "GREATER_EQUAL"),
+            TokenType::LessThan_EQUALS => write!(f, "LESS_EQUAL"),
+            TokenType::LessThan => write!(f, "LESS"),
             _ => write!(f, "EOF"),
         }
     }
