@@ -80,8 +80,11 @@ impl<'a> Lexer<'a> {
                 }
                 _ => {
                     exitcode = 65;
-                    let error =
-                        TokenError::new("Error: Unexpected charater:".to_string(), self.line, 65);
+                    let error = TokenError::new(
+                        format!("Error: Unexpected charater: {}", char),
+                        self.line,
+                        65,
+                    );
                     println!("{error}");
                 }
             };
