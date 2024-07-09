@@ -124,7 +124,7 @@ fn tokenize(contents: &str) {
                 println!("{}", tok);
             }
             Err(e) => {
-                println!("{}", e);
+                writeln!(io::stderr(), "{}", e);
                 exit(e.exitcode);
             }
         }
