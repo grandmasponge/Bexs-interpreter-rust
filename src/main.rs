@@ -123,6 +123,25 @@ impl<'a> Lexer<'a> {
                         ));
                     }
                 }
+                '/' => {
+                    let mut peeker = characters.clone().peekable();
+                    if peeker.next() == Some('/') {
+                        //omgeh we have a comment
+                        while let Some(end) = &characters.next() {
+                            if end == &'\n' {
+                                break;
+                            }
+                        }
+                    } else if peeker.next() == Some('*') {
+                        while let Some(end) = &characters.next() {
+                            if end == &'*' && &characters.next() == &Some('/') {
+                                break;
+                            }
+                        }
+                    } else {
+                        tokens.push(Token::newToken(TokenType::Slash, char.to_string(), None))
+                    }
+                }
                 _ => {
                     exitcode = 65;
                     let error = TokenError::new(
@@ -184,6 +203,7 @@ enum TokenType {
     LessThan_EQUALS,
     GreaterThan,
     GreaterThan_EQUALS,
+    Slash,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
