@@ -254,6 +254,7 @@ impl std::fmt::Display for TokenType {
             TokenType::GreaterThan_EQUALS => write!(f, "GREATER_EQUAL"),
             TokenType::LessThan_EQUALS => write!(f, "LESS_EQUAL"),
             TokenType::LessThan => write!(f, "LESS"),
+            TokenType::Slash => write!(f, "SLASH"),
             _ => write!(f, "EOF"),
         }
     }
