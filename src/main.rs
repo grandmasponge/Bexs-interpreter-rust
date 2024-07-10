@@ -193,12 +193,12 @@ impl Lexer {
                                 break;
                             }
                         }
-                        let mut numstr = number.iter().collect::<String>();
+                        let mut numstr = number.clone().iter().collect::<String>();
                         if numstr.ends_with('.') {
                             numstr.push('0');
                             tokens.push(Token::newToken(
                                 TokenType::Number,
-                                numstr.clone(),
+                                number.iter().collect::<String>(),
                                 Some(numstr),
                             ));
                             tokens.push(Token::newToken(TokenType::Dot, ".".to_string(), None));
