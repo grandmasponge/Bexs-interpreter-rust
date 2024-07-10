@@ -197,11 +197,10 @@ impl Lexer {
 
                         if numstr.ends_with('.') {
                             numstr.push('0');
-                            tokens.push(Token::newToken(
-                                TokenType::Number,
-                                number.iter().collect::<String>(),
-                                Some(numstr),
-                            ));
+                            let mut actual: String = number.iter().collect::<String>();
+                            actual.pop();
+
+                            tokens.push(Token::newToken(TokenType::Number, actual, Some(numstr)));
                             tokens.push(Token::newToken(TokenType::Dot, ".".to_string(), None));
                         } else {
                             if !numstr.contains('.') || !has_dot {
