@@ -168,7 +168,7 @@ impl Lexer {
                             self.line,
                             65,
                         );
-                        println!("{}", error)
+                        writeln!(stderr(), "{}", error).unwrap()
                     }
                 }
                 _ => {
