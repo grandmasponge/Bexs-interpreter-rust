@@ -195,9 +195,21 @@ impl Lexer {
                             }
 
                             number.push(next_char);
+
+                            if let Some(&next_next_char) = characters.peek() {
+                                if !next_next_char.is_ascii_digit() {
+                                    // If not a digit after dot, append '0'
+                                    number.push('0');
+                                    break;
+                                }
+                            } else {
+                                // If end of input after dot, append '0'
+                                number.push('0');
+                                break;
+                            }
+                            continue; // Continue to add digits after the dot
                         }
 
-                        // If no dot was found, append .0 to make it a decimal number
                         if !has_dot {
                             number.push('.');
                             number.push('0');
