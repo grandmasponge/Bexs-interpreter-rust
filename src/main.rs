@@ -194,6 +194,7 @@ impl Lexer {
                             }
                         }
                         let mut numstr = number.clone().iter().collect::<String>();
+
                         if numstr.ends_with('.') {
                             numstr.push('0');
                             tokens.push(Token::newToken(
@@ -203,9 +204,12 @@ impl Lexer {
                             ));
                             tokens.push(Token::newToken(TokenType::Dot, ".".to_string(), None));
                         } else {
+                            if !numstr.contains('.') || !has_dot {
+                                numstr.push_str(".0");
+                            }
                             tokens.push(Token::newToken(
                                 TokenType::Number,
-                                numstr.clone(),
+                                number.iter().collect::<String>(),
                                 Some(numstr),
                             ));
                         }
