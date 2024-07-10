@@ -189,11 +189,18 @@ impl Lexer {
                                     number.push('0');
                                 }
                                 let numString = number.iter().collect::<String>();
+                                let tok = Token::newToken(
+                                    TokenType::Number,
+                                    numString.clone(),
+                                    Some(numString.clone()),
+                                );
+                                println!("{tok}");
                                 tokens.push(Token::newToken(
                                     TokenType::Number,
                                     numString.clone(),
                                     Some(numString),
                                 ));
+
                                 break;
                             } else if char == '.' {
                                 has_dot = true;
