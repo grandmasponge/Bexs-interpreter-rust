@@ -172,13 +172,29 @@ impl Lexer {
                     }
                 }
                 _ => {
-                    exitcode = 65;
-                    let error = TokenError::new(
-                        format!("Error: Unexpected character: {}", char),
-                        self.line,
-                        65,
-                    );
-                    writeln!(stderr(), "{error}");
+                    if char.is_digit(10) {
+                        let mut number = Vec::new();
+                        while let Some(char) = characters.next() {
+                            if (!char.is_digit(10) && char != '.') {
+                                let numString = number.iter().collect::<String>();
+                                tokens.push(Token::newToken(
+                                    TokenType::Number,
+                                    numString.clone(),
+                                    Some(numString),
+                                ));
+                                break;
+                            }
+                            number.push(char);
+                        }
+                    } else {
+                        exitcode = 65;
+                        let error = TokenError::new(
+                            format!("Error: Unexpected character: {}", char),
+                            self.line,
+                            65,
+                        );
+                        writeln!(stderr(), "{error}");
+                    }
                 }
             };
         }
@@ -234,6 +250,7 @@ enum TokenType {
     GreaterThan_EQUALS,
     Slash,
     String,
+    Number,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
@@ -286,6 +303,7 @@ impl std::fmt::Display for TokenType {
             TokenType::LessThan => write!(f, "LESS"),
             TokenType::Slash => write!(f, "SLASH"),
             TokenType::String => write!(f, "STRING"),
+            TokenType::Number => write!(f, "NUMBER"),
             _ => write!(f, "EOF"),
         }
     }
