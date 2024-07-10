@@ -179,6 +179,7 @@ impl Lexer {
                 }
                 _ => {
                     if char.is_alphabetic() {
+                        println!("im confued {}", &char);
                         let mut buf = String::from(char);
                         while let Some(&next_char) = characters.peek() {
                             if characters.peek() == Some(&' ') || characters.peek() == Some(&'\n') {
