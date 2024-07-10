@@ -9,6 +9,7 @@ use std::io::stderr;
 use std::io::stdout;
 use std::io::{self, Write};
 use std::iter::Peekable;
+use std::num::NonZero;
 use std::process::exit;
 use std::ptr::write;
 use std::str::Chars;
@@ -188,7 +189,85 @@ impl Lexer {
                                 break;
                             }
                         }
-                        tokens.push(Token::newToken(TokenType::Identifer, buf, None));
+                        match buf.as_str() {
+                            "and" => tokens.push(Token::newToken(
+                                TokenType::And,
+                                "AND".to_string(),
+                                None,
+                            )),
+                            "class" => tokens.push(Token::newToken(
+                                TokenType::Class,
+                                "CLASS".to_string(),
+                                None,
+                            )),
+                            "else" => tokens.push(Token::newToken(
+                                TokenType::Else,
+                                "ELSE".to_string(),
+                                None,
+                            )),
+                            "false" => tokens.push(Token::newToken(
+                                TokenType::False,
+                                "FALSE".to_string(),
+                                None,
+                            )),
+                            "for" => tokens.push(Token::newToken(
+                                TokenType::For,
+                                "FOR".to_string(),
+                                None,
+                            )),
+                            "fun" => tokens.push(Token::newToken(
+                                TokenType::Fun,
+                                "FUN".to_string(),
+                                None,
+                            )),
+                            "if" => {
+                                tokens.push(Token::newToken(TokenType::If, "IF".to_string(), None))
+                            }
+                            "nil" => tokens.push(Token::newToken(
+                                TokenType::Nil,
+                                "NIL".to_string(),
+                                None,
+                            )),
+                            "or" => {
+                                tokens.push(Token::newToken(TokenType::or, "OR".to_string(), None))
+                            }
+                            "print" => tokens.push(Token::newToken(
+                                TokenType::Print,
+                                "PRINT".to_string(),
+                                None,
+                            )),
+                            "return" => tokens.push(Token::newToken(
+                                TokenType::Return,
+                                "RETURN".to_string(),
+                                None,
+                            )),
+                            "super" => tokens.push(Token::newToken(
+                                TokenType::Super,
+                                "SUPER".to_string(),
+                                None,
+                            )),
+                            "this" => tokens.push(Token::newToken(
+                                TokenType::This,
+                                "THIS".to_string(),
+                                None,
+                            )),
+                            "true" => tokens.push(Token::newToken(
+                                TokenType::True,
+                                "TRUE".to_string(),
+                                None,
+                            )),
+                            "var" => tokens.push(Token::newToken(
+                                TokenType::Var,
+                                "VAR".to_string(),
+                                None,
+                            )),
+                            "while" => tokens.push(Token::newToken(
+                                TokenType::While,
+                                "WHILE".to_string(),
+                                None,
+                            )),
+                            _ => tokens.push(Token::newToken(TokenType::Identifer, buf, None)),
+                        }
                     } else if char.is_ascii_digit() {
                         let mut has_dot = false;
                         let mut number = Vec::new();
@@ -298,6 +377,22 @@ enum TokenType {
     String,
     Number,
     Identifer,
+    And,
+    Class,
+    False,
+    Else,
+    For,
+    Fun,
+    If,
+    Nil,
+    or,
+    Print,
+    Return,
+    Super,
+    This,
+    True,
+    Var,
+    While,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
@@ -352,6 +447,21 @@ impl std::fmt::Display for TokenType {
             TokenType::String => write!(f, "STRING"),
             TokenType::Number => write!(f, "NUMBER"),
             TokenType::Identifer => write!(f, "IDENTIFIER"),
+            TokenType::And => write!(f, "AND"),
+            TokenType::Class => write!(f, "CLASS"),
+            TokenType::Else => write!(f, "ELSE"),
+            TokenType::False => write!(f, "FLASE"),
+            TokenType::For => write!(f, "FOR"),
+            TokenType::If => write!(f, "IF"),
+            TokenType::Nil => write!(f, "NIL"),
+            TokenType::or => write!(f, "OR"),
+            TokenType::Print => write!(f, "PRINT"),
+            TokenType::Return => write!(f, "RETURN"),
+            TokenType::Super => write!(f, "SUPER"),
+            TokenType::This => write!(f, "THIS"),
+            TokenType::True => write!(f, "TRUE"),
+            TokenType::Var => write!(f, "VAR"),
+            TokenType::While => write!(f, "WHILE"),
             _ => write!(f, "EOF"),
         }
     }
