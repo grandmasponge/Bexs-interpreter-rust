@@ -9,7 +9,6 @@ use std::io::stderr;
 use std::io::stdout;
 use std::io::{self, Write};
 use std::iter::Peekable;
-use std::num::NonZero;
 use std::process::exit;
 use std::ptr::write;
 use std::str::Chars;
