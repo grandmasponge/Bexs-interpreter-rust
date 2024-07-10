@@ -185,6 +185,7 @@ impl Lexer {
                         while let Some(char) = characters.next() {
                             println!("im gettin here at least");
                             if (!char.is_ascii_digit() && char != '.') {
+                                println!("ami getting here");
                                 if !has_dot {
                                     number.push('.');
                                     number.push('0');
