@@ -181,7 +181,7 @@ impl Lexer {
                     if char.is_alphabetic() || char == '_' {
                         let mut buf = String::from(char);
                         while let Some(&next_char) = characters.peek() {
-                            if next_char.is_alphabetic() || next_char == '_' {
+                            if next_char.is_ascii_alphanumeric() || next_char == '_' {
                                 buf.push(next_char);
                                 characters.next();
                             } else {
