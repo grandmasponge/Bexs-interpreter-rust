@@ -171,6 +171,9 @@ impl Lexer {
                         writeln!(stderr(), "{}", error).unwrap()
                     }
                 }
+                '0'..'9' => {
+                    println!("marcus");
+                }
                 _ => {
                     if char.is_digit(10) {
                         let mut number = Vec::new();
