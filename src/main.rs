@@ -124,18 +124,22 @@ impl Lexer {
                 }
                 '/' => {
                     let mut peeker = characters.clone().peekable();
-                    if peeker.next() == Some('/') {
+                    if peeker.peek() == Some(&'/') {
                         //omgeh we have a comment
-                        while let Some(end) = &characters.next() {
-                            if end == &'\n' {
+                        while let Some(end) = characters.next() {
+                            if end == '\n' {
                                 self.line += 1;
                                 break;
                             }
                         }
-                    } else if peeker.next() == Some('*') {
+                    } else if peeker.peek() == Some(&'*') {
                         while let Some(end) = characters.next() {
                             if end == '*' && characters.next() == Some('/') {
+                                self.line += 1;
                                 break;
+                            }
+                            if end == '\n' {
+                                self.line += 1;
                             }
                         }
                     } else {
@@ -172,11 +176,16 @@ impl Lexer {
                     }
                 }
                 _ => {
-                    if char.is_digit(10) {
+                    if char.is_ascii_digit() {
+                        let mut has_dot = false;
                         let mut number = Vec::new();
                         number.push(char);
                         while let Some(char) = characters.next() {
-                            if (!char.is_digit(10) && char != '.') {
+                            if (!char.is_ascii_digit() && char != '.') {
+                                if !has_dot {
+                                    number.push('.');
+                                    number.push('0');
+                                }
                                 let numString = number.iter().collect::<String>();
                                 tokens.push(Token::newToken(
                                     TokenType::Number,
@@ -184,6 +193,8 @@ impl Lexer {
                                     Some(numString),
                                 ));
                                 break;
+                            } else if char == '.' {
+                                has_dot = true;
                             }
 
                             number.push(char);
