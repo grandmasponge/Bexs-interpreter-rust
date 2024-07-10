@@ -144,6 +144,34 @@ impl<'a> Lexer<'a> {
                         tokens.push(Token::newToken(TokenType::Slash, char.to_string(), None))
                     }
                 }
+                '"' => {
+                    let mut error = true;
+                    let mut value = Vec::new();
+                    while let &Some(char) = &characters.next() {
+                        match char {
+                            '\n' => self.line += 1,
+                            '"' => {
+                                error = false;
+                                let inner = value.iter().collect::<String>();
+                                tokens.push(Token::newToken(
+                                    TokenType::String,
+                                    format!("\"{}\"", inner),
+                                    Some(inner),
+                                ));
+                            }
+                            _ => value.push(char),
+                        }
+                    }
+                    if error {
+                        exitcode = 65;
+                        let error = TokenError::new(
+                            "Error: Unterminated string.".to_string(),
+                            self.line,
+                            65,
+                        );
+                        println!("{}", error)
+                    }
+                }
                 _ => {
                     exitcode = 65;
                     let error = TokenError::new(
@@ -160,6 +188,8 @@ impl<'a> Lexer<'a> {
         }
         exitcode
     }
+
+    fn String(peekable: &Chars) {}
 }
 
 struct Token {
@@ -206,6 +236,7 @@ enum TokenType {
     GreaterThan,
     GreaterThan_EQUALS,
     Slash,
+    String,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
@@ -257,6 +288,7 @@ impl std::fmt::Display for TokenType {
             TokenType::LessThan_EQUALS => write!(f, "LESS_EQUAL"),
             TokenType::LessThan => write!(f, "LESS"),
             TokenType::Slash => write!(f, "SLASH"),
+            TokenType::String => write!(f, "STRING"),
             _ => write!(f, "EOF"),
         }
     }
