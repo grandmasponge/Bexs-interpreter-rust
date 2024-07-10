@@ -13,25 +13,23 @@ use std::str::Chars;
 
 use anyhow::Ok;
 
-struct Lexer<'a> {
+struct Lexer {
     line: i32,
-    charaters: Chars<'a>,
 }
 
-impl<'a> Lexer<'a> {
-    fn new(contents: &'a str) -> Self {
+impl Lexer {
+    fn new() -> Self {
         let mut line = 1;
-        let chars = contents.chars();
-        Self {
-            line,
-            charaters: chars,
-        }
+        Self { line }
     }
 
-    fn tokenize(&mut self) -> i32 {
+    fn tokenize<I>(&mut self, characters: &mut Peekable<I>) -> i32
+    where
+        I: Iterator<Item = char> + Clone,
+    {
         let mut exitcode = 0;
         let mut tokens = Vec::new();
-        let mut characters = self.charaters.clone().peekable();
+
         while let Some(char) = characters.next() {
             match char {
                 '\n' => {
@@ -135,8 +133,8 @@ impl<'a> Lexer<'a> {
                             }
                         }
                     } else if peeker.next() == Some('*') {
-                        while let Some(end) = &characters.next() {
-                            if end == &'*' && &characters.next() == &Some('/') {
+                        while let Some(end) = characters.next() {
+                            if end == '*' && characters.next() == Some('/') {
                                 break;
                             }
                         }
@@ -147,7 +145,7 @@ impl<'a> Lexer<'a> {
                 '"' => {
                     let mut error = true;
                     let mut value = Vec::new();
-                    while let &Some(char) = &characters.next() {
+                    while let Some(char) = characters.next() {
                         match char {
                             '\n' => self.line += 1,
                             '"' => {
@@ -158,6 +156,7 @@ impl<'a> Lexer<'a> {
                                     format!("\"{}\"", inner),
                                     Some(inner),
                                 ));
+                                break;
                             }
                             _ => value.push(char),
                         }
@@ -188,8 +187,6 @@ impl<'a> Lexer<'a> {
         }
         exitcode
     }
-
-    fn String(peekable: &Chars) {}
 }
 
 struct Token {
@@ -313,9 +310,11 @@ fn main() {
                 writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
                 String::new()
             });
-            let mut lexer = Lexer::new(&file_contents);
+            let mut file_contents = file_contents.chars().peekable();
 
-            let result = lexer.tokenize();
+            let mut lexer = Lexer::new();
+
+            let result = lexer.tokenize(&mut file_contents);
             println!("EOF  null");
             exit(result)
         }
