@@ -182,45 +182,33 @@ impl Lexer {
                         number.push(char);
 
                         while let Some(&next_char) = characters.peek() {
-                            if !next_char.is_ascii_digit() && next_char != '.' {
-                                break;
-                            }
-                            characters.next(); // Advance the iterator
-
-                            if next_char == '.' {
-                                if has_dot {
-                                    break; // Break if there's more than one dot
-                                }
+                            if next_char.is_ascii_digit() {
+                                number.push(next_char);
+                                characters.next();
+                            } else if next_char == '.' && !has_dot {
+                                number.push(next_char);
                                 has_dot = true;
-                            }
-
-                            number.push(next_char);
-
-                            if let Some(&next_next_char) = characters.peek() {
-                                if !next_next_char.is_ascii_digit() {
-                                    // If not a digit after dot, append '0'
-                                    number.push('0');
-                                    break;
-                                }
+                                characters.next();
                             } else {
-                                // If end of input after dot, append '0'
-                                number.push('0');
                                 break;
                             }
-                            continue; // Continue to add digits after the dot
                         }
-
-                        if !has_dot {
-                            number.push('.');
-                            number.push('0');
+                        let mut numstr = number.iter().collect::<String>();
+                        if numstr.ends_with('.') {
+                            numstr.push('0');
+                            tokens.push(Token::newToken(
+                                TokenType::Number,
+                                numstr.clone(),
+                                Some(numstr),
+                            ));
+                            tokens.push(Token::newToken(TokenType::Dot, ".".to_string(), None));
+                        } else {
+                            tokens.push(Token::newToken(
+                                TokenType::Number,
+                                numstr.clone(),
+                                Some(numstr),
+                            ));
                         }
-
-                        let num_string = number.iter().collect::<String>();
-                        tokens.push(Token::newToken(
-                            TokenType::Number,
-                            num_string.clone(),
-                            Some(num_string),
-                        ));
                     } else {
                         exitcode = 65;
                         let error = TokenError::new(
