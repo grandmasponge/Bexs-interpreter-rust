@@ -191,78 +191,78 @@ impl Lexer {
                         match buf.as_str() {
                             "and" => tokens.push(Token::newToken(
                                 TokenType::And,
-                                "AND".to_string(),
+                                "and".to_string(),
                                 None,
                             )),
                             "class" => tokens.push(Token::newToken(
                                 TokenType::Class,
-                                "CLASS".to_string(),
+                                "class".to_string(),
                                 None,
                             )),
                             "else" => tokens.push(Token::newToken(
                                 TokenType::Else,
-                                "ELSE".to_string(),
+                                "else".to_string(),
                                 None,
                             )),
                             "false" => tokens.push(Token::newToken(
                                 TokenType::False,
-                                "FALSE".to_string(),
+                                "false".to_string(),
                                 None,
                             )),
                             "for" => tokens.push(Token::newToken(
                                 TokenType::For,
-                                "FOR".to_string(),
+                                "for".to_string(),
                                 None,
                             )),
                             "fun" => tokens.push(Token::newToken(
                                 TokenType::Fun,
-                                "FUN".to_string(),
+                                "fun".to_string(),
                                 None,
                             )),
                             "if" => {
-                                tokens.push(Token::newToken(TokenType::If, "IF".to_string(), None))
+                                tokens.push(Token::newToken(TokenType::If, "if".to_string(), None))
                             }
                             "nil" => tokens.push(Token::newToken(
                                 TokenType::Nil,
-                                "NIL".to_string(),
+                                "nil".to_string(),
                                 None,
                             )),
                             "or" => {
-                                tokens.push(Token::newToken(TokenType::or, "OR".to_string(), None))
+                                tokens.push(Token::newToken(TokenType::or, "or".to_string(), None))
                             }
                             "print" => tokens.push(Token::newToken(
                                 TokenType::Print,
-                                "PRINT".to_string(),
+                                "print".to_string(),
                                 None,
                             )),
                             "return" => tokens.push(Token::newToken(
                                 TokenType::Return,
-                                "RETURN".to_string(),
+                                "return".to_string(),
                                 None,
                             )),
                             "super" => tokens.push(Token::newToken(
                                 TokenType::Super,
-                                "SUPER".to_string(),
+                                "super".to_string(),
                                 None,
                             )),
                             "this" => tokens.push(Token::newToken(
                                 TokenType::This,
-                                "THIS".to_string(),
+                                "this".to_string(),
                                 None,
                             )),
                             "true" => tokens.push(Token::newToken(
                                 TokenType::True,
-                                "TRUE".to_string(),
+                                "true".to_string(),
                                 None,
                             )),
                             "var" => tokens.push(Token::newToken(
                                 TokenType::Var,
-                                "VAR".to_string(),
+                                "var".to_string(),
                                 None,
                             )),
                             "while" => tokens.push(Token::newToken(
                                 TokenType::While,
-                                "WHILE".to_string(),
+                                "while".to_string(),
                                 None,
                             )),
                             _ => tokens.push(Token::newToken(TokenType::Identifer, buf, None)),
