@@ -174,6 +174,7 @@ impl Lexer {
                 _ => {
                     if char.is_digit(10) {
                         let mut number = Vec::new();
+                        number.push(char);
                         while let Some(char) = characters.next() {
                             if (!char.is_digit(10) && char != '.') {
                                 let numString = number.iter().collect::<String>();
