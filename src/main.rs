@@ -1,6 +1,8 @@
 use core::fmt;
 use core::panic;
+use std::char;
 use std::char::ParseCharError;
+use std::collections::binary_heap::PeekMut;
 use std::env;
 use std::fs;
 use std::io::stderr;
@@ -176,7 +178,22 @@ impl Lexer {
                     }
                 }
                 _ => {
-                    if char.is_ascii_digit() {
+                    if char.is_alphabetic() {
+                        let mut buf = String::from(char);
+                        while let Some(&next_char) = characters.peek() {
+                            if characters.peek() == Some(&' ') || characters.peek() == Some(&'\n') {
+                                tokens.push(Token::newToken(
+                                    TokenType::Identifer,
+                                    buf.clone(),
+                                    None,
+                                ));
+                                break;
+                            } else {
+                                buf.push(next_char);
+                                characters.next();
+                            }
+                        }
+                    } else if char.is_ascii_digit() {
                         let mut has_dot = false;
                         let mut number = Vec::new();
                         number.push(char);
@@ -279,6 +296,7 @@ enum TokenType {
     Slash,
     String,
     Number,
+    Identifer,
     EOF,
     EQUAL,
     EQUAL_EQUAL,
@@ -332,6 +350,7 @@ impl std::fmt::Display for TokenType {
             TokenType::Slash => write!(f, "SLASH"),
             TokenType::String => write!(f, "STRING"),
             TokenType::Number => write!(f, "NUMBER"),
+            TokenType::Identifer => write!(f, "IDENTIFIER"),
             _ => write!(f, "EOF"),
         }
     }
