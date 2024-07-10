@@ -181,7 +181,7 @@ impl Lexer {
                         let mut number = Vec::new();
                         number.push(char);
                         while let Some(char) = characters.next() {
-                            if (!char.is_ascii_digit() && characters.peek() != Some(&'.')) {
+                            if !char.is_ascii_digit() && characters.peek() != Some(&'.') {
                                 if !has_dot {
                                     number.push('.');
                                     number.push('0');
