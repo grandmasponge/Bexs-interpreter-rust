@@ -178,22 +178,17 @@ impl Lexer {
                     }
                 }
                 _ => {
-                    if char.is_alphabetic() {
-                        println!("im confued {}", &char);
+                    if char.is_alphabetic() || char == '_' {
                         let mut buf = String::from(char);
                         while let Some(&next_char) = characters.peek() {
-                            if characters.peek() == Some(&' ') || characters.peek() == Some(&'\n') {
-                                tokens.push(Token::newToken(
-                                    TokenType::Identifer,
-                                    buf.clone(),
-                                    None,
-                                ));
-                                break;
-                            } else {
+                            if next_char.is_alphabetic() || next_char == '_' {
                                 buf.push(next_char);
                                 characters.next();
+                            } else {
+                                break;
                             }
                         }
+                        tokens.push(Token::newToken(TokenType::Identifer, buf, None));
                     } else if char.is_ascii_digit() {
                         let mut has_dot = false;
                         let mut number = Vec::new();
