@@ -176,7 +176,9 @@ impl Lexer {
                     }
                 }
                 _ => {
+                    println!("i just got executed");
                     if char.is_ascii_digit() {
+                        println!("number detected");
                         let mut has_dot = false;
                         let mut number = Vec::new();
                         number.push(char);
