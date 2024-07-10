@@ -180,32 +180,35 @@ impl Lexer {
                         let mut has_dot = false;
                         let mut number = Vec::new();
                         number.push(char);
-                        while let Some(char) = characters.next() {
-                            if !char.is_ascii_digit() && characters.peek() != Some(&'.') {
-                                if !has_dot {
-                                    number.push('.');
-                                    number.push('0');
-                                }
-                                let numString = number.iter().collect::<String>();
-                                let tok = Token::newToken(
-                                    TokenType::Number,
-                                    numString.clone(),
-                                    Some(numString.clone()),
-                                );
-                                println!("{tok}");
-                                tokens.push(Token::newToken(
-                                    TokenType::Number,
-                                    numString.clone(),
-                                    Some(numString),
-                                ));
 
+                        while let Some(&next_char) = characters.peek() {
+                            if !next_char.is_ascii_digit() && next_char != '.' {
                                 break;
-                            } else if char == '.' {
+                            }
+                            characters.next(); // Advance the iterator
+
+                            if next_char == '.' {
+                                if has_dot {
+                                    break; // Break if there's more than one dot
+                                }
                                 has_dot = true;
                             }
 
-                            number.push(char);
+                            number.push(next_char);
                         }
+
+                        // If no dot was found, append .0 to make it a decimal number
+                        if !has_dot {
+                            number.push('.');
+                            number.push('0');
+                        }
+
+                        let num_string = number.iter().collect::<String>();
+                        tokens.push(Token::newToken(
+                            TokenType::Number,
+                            num_string.clone(),
+                            Some(num_string),
+                        ));
                     } else {
                         exitcode = 65;
                         let error = TokenError::new(
@@ -213,7 +216,9 @@ impl Lexer {
                             self.line,
                             65,
                         );
-                        writeln!(stderr(), "{error}");
+                        if let Err(e) = writeln!(stderr(), "{error}") {
+                            eprintln!("Failed to write to stderr: {}", e);
+                        }
                     }
                 }
             };
