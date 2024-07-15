@@ -13,6 +13,7 @@ impl Parser {
                 TokenType::True => expr.push(Expr::Bool(true)),
                 TokenType::Nil => expr.push(Expr::Nil),
                 TokenType::False => expr.push(Expr::Bool(false)),
+                TokenType::Number => expr.push(Expr::Number(token._string.clone())),
                 _ => {}
             }
         }

@@ -1,7 +1,7 @@
 pub enum Expr {
     Bool(bool),
     Nil,
-    Number,
+    Number(String),
     String,
 }
 
@@ -11,7 +11,7 @@ impl std::fmt::Display for Expr {
             Expr::Bool(b) => write!(f, "{b}"),
             Expr::String => write!(f, "not implimented"),
             Expr::Nil => write!(f, "nil"),
-            Expr::Number => write!(f, "not implimented"),
+            Expr::Number(num) => write!(f, "{num}"),
         }
     }
 }
