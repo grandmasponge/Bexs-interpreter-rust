@@ -13,16 +13,21 @@ use std::process::exit;
 use std::ptr::write;
 use std::str::Chars;
 
-use anyhow::Ok;
+mod expr;
+mod parse;
 
 struct Lexer {
     line: i32,
+    tokens: Vec<Token>,
 }
 
 impl Lexer {
     fn new() -> Self {
         let mut line = 1;
-        Self { line }
+        Self {
+            line,
+            tokens: Vec::new(),
+        }
     }
 
     fn tokenize<I>(&mut self, characters: &mut Peekable<I>) -> i32
@@ -322,14 +327,12 @@ impl Lexer {
                 }
             };
         }
-        for token in tokens {
-            println!("{token}");
-        }
+        self.tokens = tokens;
         exitcode
     }
 }
-
-struct Token {
+#[derive(Clone)]
+pub struct Token {
     _type: TokenType,
     _string: String,
     _value: Option<String>,
@@ -346,7 +349,7 @@ impl fmt::Display for Token {
 }
 
 impl Token {
-    fn newToken(_type: TokenType, _string: String, _value: Option<String>) -> Self {
+    pub fn newToken(_type: TokenType, _string: String, _value: Option<String>) -> Self {
         Self {
             _type,
             _string,
@@ -354,8 +357,8 @@ impl Token {
         }
     }
 }
-
-enum TokenType {
+#[derive(Clone, Copy)]
+pub enum TokenType {
     LeftParen,
     RightParen,
     LeftBrace,
@@ -476,22 +479,35 @@ fn main() {
     let command = &args[1];
     let filename = &args[2];
 
+    let file_contents = fs::read_to_string(filename).unwrap_or_else(|_| {
+        writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
+        String::new()
+    });
+
     match command.as_str() {
         "tokenize" => {
             // You can use print statements as follows for debugging, they'll be visible when running tests.
             writeln!(io::stderr(), "Logs from your program will appear here!").unwrap();
 
-            let file_contents = fs::read_to_string(filename).unwrap_or_else(|_| {
-                writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
-                String::new()
-            });
             let mut file_contents = file_contents.chars().peekable();
-
             let mut lexer = Lexer::new();
 
             let result = lexer.tokenize(&mut file_contents);
+            for token in lexer.tokens {
+                println!("{token}");
+            }
             println!("EOF  null");
             exit(result)
+        }
+        "parse" => {
+            let mut file_contents = file_contents.chars().peekable();
+            let mut lexer = Lexer::new();
+            let result = lexer.tokenize(&mut file_contents);
+            let parser = parse::Parser::parse_from_tokens(lexer.tokens.clone());
+            for expr in parser.expressions {
+                println!("{expr}");
+            }
+            exit(result);
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
