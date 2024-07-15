@@ -14,6 +14,7 @@ impl Parser {
                 TokenType::Nil => expr.push(Expr::Nil),
                 TokenType::False => expr.push(Expr::Bool(false)),
                 TokenType::Number => expr.push(Expr::Number(token._value.unwrap().clone())),
+                TokenType::String => expr.push(Expr::String(token._value.clone().unwrap())),
                 _ => {}
             }
         }
