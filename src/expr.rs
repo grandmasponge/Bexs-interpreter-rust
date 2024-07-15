@@ -10,7 +10,7 @@ impl std::fmt::Display for Expr {
         match self {
             Expr::Bool(b) => write!(f, "{b}"),
             Expr::String => write!(f, "not implimented"),
-            Expr::Nil => write!(f, "Nil"),
+            Expr::Nil => write!(f, "nil"),
             Expr::Number => write!(f, "not implimented"),
         }
     }
