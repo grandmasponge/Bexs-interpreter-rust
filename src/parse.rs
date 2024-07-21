@@ -103,7 +103,7 @@ impl Parser {
                         return Err(ExprError::new("oops".to_string(), 65));
                     }
                 }
-                _ => Err(ExprError::new("Parseing error".to_string(), 65)),
+                _ => Err(ExprError::new("".to_string(), 65)),
             },
             None => Err(ExprError::new("bad expr".to_string(), 65)),
         }
