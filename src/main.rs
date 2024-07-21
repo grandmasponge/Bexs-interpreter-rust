@@ -447,6 +447,7 @@ impl std::fmt::Display for TokenType {
             TokenType::Class => write!(f, "CLASS"),
             TokenType::Else => write!(f, "ELSE"),
             TokenType::False => write!(f, "FALSE"),
+            TokenType::Fun => write!(f, "FUN"),
             TokenType::For => write!(f, "FOR"),
             TokenType::If => write!(f, "IF"),
             TokenType::Nil => write!(f, "NIL"),
