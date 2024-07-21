@@ -496,7 +496,7 @@ fn main() {
         "parse" => {
             let mut file_contents = file_contents.chars().peekable();
             let mut lexer = Lexer::new();
-            let result = lexer.tokenize(&mut file_contents);
+            let mut result = lexer.tokenize(&mut file_contents);
             if result == 65 {
                 exit(65);
             }
@@ -511,7 +511,10 @@ fn main() {
             let expr = parser.parse();
             match expr {
                 Ok(tehe) => println!("{tehe}"),
-                Err(e) => println!("{e}"),
+                Err(e) => {
+                    result = 65;
+                    println!("{e}")
+                }
             };
             exit(result);
         }
