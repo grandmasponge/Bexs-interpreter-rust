@@ -97,7 +97,7 @@ impl Parser {
                             self.advance();
                             return Ok(Expr::Grouping(Box::new(inner)));
                         } else {
-                            return Err(ExprError::new("Unmatched parentheses".to_string(), 65));
+                            return Err(ExprError::MissingToken(65));
                         }
                     } else {
                         return Err(ExprError::new("oops".to_string(), 65));
