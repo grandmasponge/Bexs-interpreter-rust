@@ -40,7 +40,11 @@ impl Parser {
             TokenType::GreaterThan_EQUALS,
             TokenType::LessThan,
             TokenType::LessThan_EQUALS,
-        ]) {}
+        ]) {
+            let operator = self.prev().clone().to_owned();
+            let right = self.factor();
+            expr = Ok(Expr::Binary(operator, Box::new(expr?), Box::new(right?)));
+        }
         expr
     }
 
