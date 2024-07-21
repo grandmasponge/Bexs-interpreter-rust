@@ -46,7 +46,11 @@ impl Parser {
 
     pub fn term(&mut self) -> Result<Expr, ExprError> {
         let mut expr = self.factor();
-        while self.matchexpr(&[TokenType::Minus, TokenType::Plus]) {}
+        while self.matchexpr(&[TokenType::Minus, TokenType::Plus]) {
+            let operator = self.prev().clone().to_owned();
+            let right = self.factor();
+            expr = Ok(Expr::Binary(operator, Box::new(expr?), Box::new(right?)))
+        }
         expr
     }
 
