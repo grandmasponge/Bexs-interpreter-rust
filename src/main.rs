@@ -292,7 +292,7 @@ impl Lexer {
 
                             tokens.push(Token::newToken(TokenType::Number, actual, Some(numstr)));
                             tokens.push(Token::newToken(TokenType::Dot, ".".to_string(), None));
-                        } else if numstr.ends_with('0') {
+                        } else if numstr.ends_with(".00") {
                             numstr.pop();
                             let actual = number.iter().collect::<String>();
 
