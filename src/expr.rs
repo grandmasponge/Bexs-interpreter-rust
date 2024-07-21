@@ -37,12 +37,20 @@ pub struct ExprError {
 
 impl ExprError {
     pub fn new(msg: String, code: i32) -> Self {
+        let msg = "Error: ".to_owned() + msg.as_ref();
         Self { msg, code }
+    }
+
+    pub fn MissingToken(code: i32) -> Self {
+        Self {
+            msg: "".to_string(),
+            code,
+        }
     }
 }
 
 impl std::fmt::Display for ExprError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Error: {}", self.msg)
+        write!(f, "{}", self.msg)
     }
 }
