@@ -1,17 +1,11 @@
 use core::fmt;
-use core::panic;
 use std::char;
-use std::char::ParseCharError;
-use std::collections::binary_heap::PeekMut;
 use std::env;
 use std::fs;
 use std::io::stderr;
-use std::io::stdout;
 use std::io::{self, Write};
 use std::iter::Peekable;
 use std::process::exit;
-use std::ptr::write;
-use std::str::Chars;
 
 mod expr;
 mod parse;
@@ -357,7 +351,7 @@ impl Token {
         }
     }
 }
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub enum TokenType {
     LeftParen,
     RightParen,
@@ -503,10 +497,22 @@ fn main() {
             let mut file_contents = file_contents.chars().peekable();
             let mut lexer = Lexer::new();
             let result = lexer.tokenize(&mut file_contents);
-            let parser = parse::Parser::parse_from_tokens(lexer.tokens.clone());
-            for expr in parser.expressions {
-                println!("{expr}");
+            if result == 65 {
+                exit(65);
             }
+            lexer
+                .tokens
+                .push(Token::newToken(TokenType::EOF, "".to_string(), None));
+
+            let mut tokens = lexer.tokens.clone();
+
+            let mut parser = parse::Parser::new(tokens.clone());
+
+            let expr = parser.parse();
+            match expr {
+                Ok(tehe) => println!("{tehe}"),
+                Err(e) => println!("{e}"),
+            };
             exit(result);
         }
         _ => {
