@@ -53,7 +53,11 @@ impl Parser {
     pub fn factor(&mut self) -> Result<Expr, ExprError> {
         let mut expr = self.unary();
 
-        while self.matchexpr(&[TokenType::Slash, TokenType::Star]) {}
+        while self.matchexpr(&[TokenType::Slash, TokenType::Star]) {
+            let operator = self.prev().clone().to_owned();
+            let right = self.unary();
+            expr = Ok(Expr::Binary(operator, Box::new(expr?), Box::new(right?)));
+        }
         expr
     }
 
