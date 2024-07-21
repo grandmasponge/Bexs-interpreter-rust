@@ -58,7 +58,11 @@ impl Parser {
     }
 
     pub fn unary(&mut self) -> Result<Expr, ExprError> {
-        if self.matchexpr(&[TokenType::Bang, TokenType::Minus]) {}
+        if self.matchexpr(&[TokenType::Bang, TokenType::Minus]) {
+            let operator = self.prev().clone().to_owned();
+            let expr = self.unary()?;
+            return Ok(Expr::Unary(operator, Box::new(expr)));
+        }
 
         self.primary()
     }

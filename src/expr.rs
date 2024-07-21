@@ -1,3 +1,5 @@
+use crate::Token;
+
 pub enum ExprLiteral {
     Number(String),
     String(String),
@@ -19,6 +21,7 @@ impl std::fmt::Display for ExprLiteral {
 pub enum Expr {
     Literal(ExprLiteral),
     Grouping(Box<Expr>),
+    Unary(Token, Box<Expr>),
 }
 
 impl std::fmt::Display for Expr {
@@ -26,6 +29,7 @@ impl std::fmt::Display for Expr {
         match self {
             Expr::Literal(literal) => write!(f, "{literal}"),
             Expr::Grouping(expr) => write!(f, "(group {})", *expr),
+            Expr::Unary(operator, expr) => write!(f, "({} {})", operator._string, *expr),
         }
     }
 }
