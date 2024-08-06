@@ -13,7 +13,7 @@ impl Evaluator {
         }
     }
 
-    pub fn EvaulateUnary(opcode: Token, unary: &Box<Expr>) {
+    pub fn EvaulateUnary(opcode: &Token, unary: &Box<Expr>) {
         print!("{}", opcode._string);
         Self::Evaluate(unary);
     }
