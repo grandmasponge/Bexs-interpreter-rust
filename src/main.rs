@@ -7,6 +7,9 @@ use std::io::{self, Write};
 use std::iter::Peekable;
 use std::process::exit;
 
+use eval::Evaluator;
+
+mod eval;
 mod expr;
 mod parse;
 
@@ -519,8 +522,29 @@ fn main() {
             };
             exit(result);
         }
+        "evaluate" => {
+            let mut file_contents = file_contents.chars().peekable();
+            let mut lexer = Lexer::new();
+            let mut result = lexer.tokenize(&mut file_contents);
+            if result == 65 {
+                exit(65);
+            }
+            lexer
+                .tokens
+                .push(Token::newToken(TokenType::EOF, "".to_string(), None));
+
+            let mut tokens = lexer.tokens.clone();
+
+            let mut parser = parse::Parser::new(tokens.clone());
+
+            let expr = parser.parse().unwrap();
+            let eval = Evaluator::new(expr);
+            eval.Evaluate();
+            exit(result);
+        }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();
+
             return;
         }
     }
