@@ -1,5 +1,6 @@
 use crate::expr::Expr;
 use crate::expr::ExprLiteral;
+use crate::Token;
 pub struct Evaluator;
 
 impl Evaluator {
@@ -7,11 +8,18 @@ impl Evaluator {
         match expr {
             Expr::Literal(v) => Self::EvaluateLiteral(&v),
             Expr::Grouping(expr) => Self::EvaluateGrouping(expr),
+            Expr::Unary(opcode, expr) => Self::EvaulateUnary(opcode, expr),
             _ => unreachable!(),
         }
     }
+
+    pub fn EvaulateUnary(opcode: Token, unary: &Box<Expr>) {
+        print!("{}", opcode._string);
+        Self::Evaluate(unary);
+    }
+
     pub fn EvaluateGrouping(grouping: &Box<Expr>) {
-        Evaluator::Evaluate(grouping)
+        Self::Evaluate(grouping)
     }
 
     pub fn EvaluateLiteral(literal: &ExprLiteral) {
