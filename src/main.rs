@@ -538,8 +538,7 @@ fn main() {
             let mut parser = parse::Parser::new(tokens.clone());
 
             let expr = parser.parse().unwrap();
-            let eval = Evaluator::new(expr);
-            eval.Evaluate();
+            let eval = Evaluator::Evaluate(&expr);
             exit(result);
         }
         _ => {

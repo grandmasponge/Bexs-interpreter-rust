@@ -1,32 +1,30 @@
-use crate::expr::{Expr, ExprLiteral};
-
-pub struct Evaluator {
-    Expression: Expr,
-}
+use crate::expr::Expr;
+use crate::expr::ExprLiteral;
+pub struct Evaluator;
 
 impl Evaluator {
-    pub fn new(Expression: Expr) -> Self {
-        Self { Expression }
-    }
-    pub fn Evaluate(&self) -> i32 {
-        match &self.Expression {
-            Expr::Literal(v) => EvaluateLiteral(&v),
+    pub fn Evaluate(expr: &Expr) {
+        match expr {
+            Expr::Literal(v) => Self::EvaluateLiteral(&v),
+            Expr::Grouping(expr) => Self::EvaluateGrouping(expr),
             _ => unreachable!(),
         }
-        0
     }
-}
+    pub fn EvaluateGrouping(grouping: &Box<Expr>) {
+        Evaluator::Evaluate(grouping)
+    }
 
-pub fn EvaluateLiteral(literal: &ExprLiteral) {
-    match literal {
-        ExprLiteral::Bool(bool) => println!("{bool}"),
-        ExprLiteral::Nil => println!("nil"),
-        ExprLiteral::Number(num) => {
-            let intergerliteral = num.parse::<f32>().unwrap();
-            println!("{intergerliteral}");
-        }
-        ExprLiteral::String(str) => {
-            println!("{str}");
+    pub fn EvaluateLiteral(literal: &ExprLiteral) {
+        match literal {
+            ExprLiteral::Bool(bool) => println!("{bool}"),
+            ExprLiteral::Nil => println!("nil"),
+            ExprLiteral::Number(num) => {
+                let intergerliteral = num.parse::<f32>().unwrap();
+                println!("{intergerliteral}");
+            }
+            ExprLiteral::String(str) => {
+                println!("{str}");
+            }
         }
     }
 }
