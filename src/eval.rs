@@ -1,6 +1,9 @@
+use std::ops::Deref;
+
 use crate::expr::Expr;
 use crate::expr::ExprLiteral;
 use crate::Token;
+use crate::TokenType;
 pub struct Evaluator;
 
 impl Evaluator {
@@ -14,8 +17,28 @@ impl Evaluator {
     }
 
     pub fn EvaulateUnary(opcode: &Token, unary: &Box<Expr>) {
-        print!("{}", opcode._string);
-        Self::Evaluate(unary);
+        match opcode._string.as_str() {
+            "-" => {
+                let expr = unary.deref();
+                if let Expr::Literal(ExprLiteral::Number(num)) = expr {
+                    let f32 = num.parse::<f32>().unwrap();
+                    println!("-{f32}");
+                } else {
+                    println!("error!");
+                }
+            }
+            "!" => {
+                let expr = unary.deref();
+                if let Expr::Literal(ExprLiteral::Bool(bang)) = expr {
+                    if *bang {
+                        println!("{}", !true);
+                    } else {
+                        println!("{}", !false);
+                    }
+                }
+            }
+            _ => unreachable!(),
+        }
     }
 
     pub fn EvaluateGrouping(grouping: &Box<Expr>) {
