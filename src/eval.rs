@@ -18,6 +18,15 @@ impl Evaluator {
 }
 
 pub fn EvaluateLiteral(literal: &ExprLiteral) {
-    //for now just print the literal later we match and shii
-    println!("{literal}");
+    match literal {
+        ExprLiteral::Bool(bool) => println!("{bool}"),
+        ExprLiteral::Nil => println!("nil"),
+        ExprLiteral::Number(num) => {
+            let intergerliteral = num.parse::<f32>().unwrap();
+            println!("{intergerliteral}");
+        }
+        ExprLiteral::String(str) => {
+            println!("{str}");
+        }
+    }
 }
