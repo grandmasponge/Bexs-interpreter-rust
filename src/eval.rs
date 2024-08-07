@@ -145,7 +145,15 @@ impl Evaluator {
                     }
                     return Value::Bool((lhs == rhs));
                 } else {
-                    Value::Nil
+                    if let Value::String(lhs) = left {
+                        let mut rhs = String::new();
+                        if let Value::String(r) = right {
+                            rhs = r;
+                        }
+                        Value::Bool((lhs == rhs))
+                    } else {
+                        Value::Nil
+                    }
                 }
             }
             "!=" => {
@@ -156,7 +164,15 @@ impl Evaluator {
                     }
                     return Value::Bool((lhs != rhs));
                 } else {
-                    Value::Nil
+                    if let Value::String(lhs) = left {
+                        let mut rhs = String::new();
+                        if let Value::String(r) = right {
+                            rhs = r;
+                        }
+                        Value::Bool((lhs != rhs))
+                    } else {
+                        Value::Nil
+                    }
                 }
             }
             _ => unreachable!(),
