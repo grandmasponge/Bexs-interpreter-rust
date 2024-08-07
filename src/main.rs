@@ -545,7 +545,7 @@ fn main() {
                 }
                 Err(err) => {
                     result = err.exit;
-                    println!("{}", err);
+                    writeln!(stderr(), "{}", err).unwrap();
                 }
             }
             exit(result);
