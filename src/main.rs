@@ -539,7 +539,15 @@ fn main() {
 
             let expr = parser.parse().unwrap();
             let eval = Evaluator::Evaluate(&expr);
-            println!("{eval}");
+            match eval {
+                Ok(out) => {
+                    println!("{}", out)
+                }
+                Err(err) => {
+                    result = err.exit;
+                    println!("{}", err);
+                }
+            }
             exit(result);
         }
         _ => {

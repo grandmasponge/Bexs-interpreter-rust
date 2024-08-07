@@ -1,3 +1,4 @@
+use core::fmt;
 use std::collections::btree_map::Values;
 use std::ops::Deref;
 
@@ -13,6 +14,29 @@ pub enum Value {
     Nil,
     Bool(bool),
 }
+#[derive(Debug)]
+pub struct RuntimeError {
+    msg: String,
+    //for now set line to juss 1
+    line: u32,
+    pub exit: i32,
+}
+
+impl RuntimeError {
+    fn new(msg: String) -> Self {
+        Self {
+            msg,
+            line: 1,
+            exit: 70,
+        }
+    }
+}
+
+impl fmt::Display for RuntimeError {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}\n[line {}]", self.msg, self.line)
+    }
+}
 
 impl std::fmt::Display for Value {
     fn fmt(&self, fmt: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -26,19 +50,19 @@ impl std::fmt::Display for Value {
 }
 
 impl Evaluator {
-    pub fn Evaluate(expr: &Expr) -> Value {
+    pub fn Evaluate(expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
-            Expr::Literal(v) => Self::EvaluateLiteral(&v),
+            Expr::Literal(v) => Ok(Self::EvaluateLiteral(&v)),
             Expr::Grouping(expr) => Self::Evaluate(expr),
             Expr::Unary(op, expr) => Self::EvalUnary(op, expr),
-            Expr::Binary(op, left, right) => Self::EvalBinary(op, left, right),
+            Expr::Binary(op, left, right) => Ok(Self::EvalBinary(op, left, right)),
             _ => unreachable!(),
         }
     }
 
     pub fn EvalBinary(op: &Token, left: &Box<Expr>, right: &Box<Expr>) -> Value {
-        let left = Self::Evaluate(left);
-        let right = Self::Evaluate(right);
+        let left = Self::Evaluate(left).unwrap();
+        let right = Self::Evaluate(right).unwrap();
 
         match op._string.as_str() {
             "*" => {
@@ -179,27 +203,29 @@ impl Evaluator {
         }
     }
 
-    pub fn EvalUnary(op: &Token, expr: &Box<Expr>) -> Value {
-        let right = Self::Evaluate(expr);
+    pub fn EvalUnary(op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
+        let right = Self::Evaluate(expr)?;
         match op._string.as_str() {
             "-" => {
                 if let Value::Number(n) = right {
-                    Value::Number(-n)
+                    Ok(Value::Number(-n))
                 } else {
-                    Value::Nil
+                    Err(RuntimeError::new(String::from(
+                        "Operand must be an number.",
+                    )))
                 }
             }
             "!" => match right {
-                Value::Nil => Value::Bool(true),
+                Value::Nil => Ok(Value::Bool(true)),
                 Value::Bool(b) => {
                     if b {
-                        Value::Bool(false)
+                        Ok(Value::Bool(false))
                     } else {
-                        Value::Bool(true)
+                        Ok(Value::Bool(true))
                     }
                 }
-                Value::Number(n) => Value::Bool(n == 0.0),
-                Value::String(s) => Value::Bool(s.is_empty()),
+                Value::Number(n) => Ok(Value::Bool(n == 0.0)),
+                Value::String(s) => Ok(Value::Bool(s.is_empty())),
             },
             _ => unreachable!(),
         }
