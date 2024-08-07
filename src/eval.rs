@@ -71,7 +71,15 @@ impl Evaluator {
                     }
                     return Value::Number(lhs + rhs);
                 } else {
-                    Value::Nil
+                    if let Value::String(lhs) = left {
+                        let mut rhs = String::new();
+                        if let Value::String(r) = right {
+                            rhs = r;
+                        }
+                        Value::String(format!("{}{}", lhs, rhs))
+                    } else {
+                        Value::Nil
+                    }
                 }
             }
             "-" => {
