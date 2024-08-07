@@ -148,6 +148,17 @@ impl Evaluator {
                     Value::Nil
                 }
             }
+            "!=" => {
+                if let Value::Number(lhs) = left {
+                    let mut rhs: f32 = 0.;
+                    if let Value::Number(r) = right {
+                        rhs = r;
+                    }
+                    return Value::Bool((lhs != rhs));
+                } else {
+                    Value::Nil
+                }
+            }
             _ => unreachable!(),
         }
     }
