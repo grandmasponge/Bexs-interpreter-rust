@@ -190,8 +190,6 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
-                    } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs == rhs)));
                 } else {
