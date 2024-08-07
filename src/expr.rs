@@ -10,7 +10,7 @@ pub enum ExprLiteral {
 impl std::fmt::Display for ExprLiteral {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            ExprLiteral::Number(num) => write!(f, "{num}"),
+            ExprLiteral::Number(num) => write!(f, "{}", num.parse::<String>().unwrap()),
             ExprLiteral::String(str) => write!(f, "{str}"),
             ExprLiteral::Nil => write!(f, "nil"),
             ExprLiteral::Bool(bool) => write!(f, "{bool}"),
