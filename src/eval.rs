@@ -74,6 +74,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Number(lhs * rhs));
                 } else {
@@ -85,6 +87,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Number(lhs / rhs));
                 } else {
@@ -96,6 +100,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Number(lhs + rhs));
                 } else {
@@ -103,6 +109,10 @@ impl Evaluator {
                         let mut rhs = String::new();
                         if let Value::String(r) = right {
                             rhs = r;
+                        } else {
+                            return Err(RuntimeError::new(String::from(
+                                "Operands must be numbers.",
+                            )));
                         }
                         Ok(Value::String(format!("{}{}", lhs, rhs)))
                     } else {
@@ -115,6 +125,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Number(lhs - rhs));
                 } else {
@@ -126,6 +138,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs < rhs)));
                 } else {
@@ -137,6 +151,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs > rhs)));
                 } else {
@@ -148,6 +164,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs >= rhs)));
                 } else {
@@ -159,6 +177,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs <= rhs)));
                 } else {
@@ -170,6 +190,8 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
                     return Ok(Value::Bool((lhs == rhs)));
                 } else {
@@ -177,7 +199,12 @@ impl Evaluator {
                         let mut rhs = String::new();
                         if let Value::String(r) = right {
                             rhs = r;
+                        } else {
+                            return Err(RuntimeError::new(String::from(
+                                "Operands must be numbers.",
+                            )));
                         }
+
                         Ok(Value::Bool((lhs == rhs)))
                     } else {
                         Err(RuntimeError::new(String::from("Operands must be numbers.")))
@@ -189,14 +216,22 @@ impl Evaluator {
                     let mut rhs: f32 = 0.;
                     if let Value::Number(r) = right {
                         rhs = r;
+                    } else {
+                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
                     }
+
                     return Ok(Value::Bool((lhs != rhs)));
                 } else {
                     if let Value::String(lhs) = left {
                         let mut rhs = String::new();
                         if let Value::String(r) = right {
                             rhs = r;
+                        } else {
+                            return Err(RuntimeError::new(String::from(
+                                "Operands must be numbers.",
+                            )));
                         }
+
                         Ok(Value::Bool((lhs != rhs)))
                     } else {
                         Err(RuntimeError::new(String::from("Operands must be numbers.")))
