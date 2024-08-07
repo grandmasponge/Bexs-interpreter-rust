@@ -65,8 +65,8 @@ impl Evaluator {
         left: &Box<Expr>,
         right: &Box<Expr>,
     ) -> Result<Value, RuntimeError> {
-        let left = Self::Evaluate(left).unwrap();
-        let right = Self::Evaluate(right).unwrap();
+        let left = Self::Evaluate(left)?;
+        let right = Self::Evaluate(right)?;
 
         match op._string.as_str() {
             "*" => {
