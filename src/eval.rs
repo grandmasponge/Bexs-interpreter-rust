@@ -31,6 +31,39 @@ impl Evaluator {
             Expr::Literal(v) => Self::EvaluateLiteral(&v),
             Expr::Grouping(expr) => Self::Evaluate(expr),
             Expr::Unary(op, expr) => Self::EvalUnary(op, expr),
+            Expr::Binary(op, left, right) => Self::EvalBinary(op, left, right),
+            _ => unreachable!(),
+        }
+    }
+
+    pub fn EvalBinary(op: &Token, left: &Box<Expr>, right: &Box<Expr>) -> Value {
+        let left = Self::Evaluate(left);
+        let right = Self::Evaluate(right);
+
+        match op._string.as_str() {
+            "*" => {
+                if let Value::Number(lhs) = left {
+                    let mut rhs: f32 = 0.;
+                    if let Value::Number(r) = right {
+                        rhs = r;
+                    }
+                    return Value::Number(lhs * rhs);
+                } else {
+                    Value::Nil
+                }
+            }
+            "/" => {
+                if let Value::Number(lhs) = left {
+                    let mut rhs: f32 = 0.;
+                    if let Value::Number(r) = right {
+                        rhs = r;
+                    }
+                    return Value::Number(lhs / rhs);
+                } else {
+                    Value::Nil
+                }
+            }
+
             _ => unreachable!(),
         }
     }
