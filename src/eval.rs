@@ -191,7 +191,7 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Ok(Value::Bool(false));
                     }
                     return Ok(Value::Bool((lhs == rhs)));
                 } else if let Value::Bool(lhs) = left {
@@ -199,7 +199,7 @@ impl Evaluator {
                     if let Value::Bool(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Ok(Value::Bool(false));
                     }
                     return Ok(Value::Bool((lhs == rhs)));
                 } else {
@@ -208,9 +208,7 @@ impl Evaluator {
                         if let Value::String(r) = right {
                             rhs = r;
                         } else {
-                            return Err(RuntimeError::new(String::from(
-                                "Operands must be numbers.",
-                            )));
+                            return Ok(Value::Bool(false));
                         }
                         Ok(Value::Bool((lhs == rhs)))
                     } else {
@@ -224,7 +222,7 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Ok(Value::Bool(false));
                     }
                     return Ok(Value::Bool((lhs != rhs)));
                 }
@@ -233,7 +231,7 @@ impl Evaluator {
                     if let Value::Bool(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Ok(Value::Bool(false));
                     }
                     return Ok(Value::Bool((lhs != rhs)));
                 } else {
@@ -242,9 +240,7 @@ impl Evaluator {
                         if let Value::String(r) = right {
                             rhs = r;
                         } else {
-                            return Err(RuntimeError::new(String::from(
-                                "Operands must be numbers.",
-                            )));
+                            Ok(Value::Bool(false));
                         }
                         Ok(Value::Bool((lhs != rhs)))
                     } else {
