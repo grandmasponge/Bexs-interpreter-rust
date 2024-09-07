@@ -34,9 +34,7 @@ impl Interpreter {
                     let value = Evaluator::Evaluate(Expr);
 
                     match value {
-                        Ok(val) => {
-                            println!("wheeee");
-                        }
+                        Ok(val) => {}
                         Err(e) => {
                             return Err(e);
                         }

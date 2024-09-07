@@ -84,7 +84,7 @@ impl Parser {
         ]) {
             let operator = self.prev().clone().to_owned();
             let right = self.factor();
-            println!("im failing here");
+
             expr = Ok(Expr::Binary(operator, Box::new(expr?), Box::new(right?)));
         }
         expr
