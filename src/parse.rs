@@ -60,8 +60,7 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Result<Expr, ExprError> {
-        let expr = self.equality();
-        expr
+        self.equality()
     }
 
     pub fn equality(&mut self) -> Result<Expr, ExprError> {

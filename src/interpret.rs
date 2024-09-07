@@ -30,7 +30,15 @@ impl Interpreter {
                         }
                     }
                 }
-                Statment::ExprStmt(Expr) => {}
+                Statment::ExprStmt(Expr) => {
+                    let value = Evaluator::Evaluate(Expr);
+                    match value {
+                        Ok(val) => {}
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    }
+                }
             }
         }
         Ok(())

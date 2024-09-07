@@ -1,1 +1,1 @@
-26 - 83 >= -93 * 2 / 93 + 50
+"baz" + "hello" + "quz" + "bar" == "bazhelloquzbar";
