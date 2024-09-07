@@ -27,6 +27,7 @@ impl Parser {
         let mut index = 0;
         while !self.IsAtEnd() {
             statments.insert(index, self.statement());
+            index += 1;
         }
         return statments;
     }
