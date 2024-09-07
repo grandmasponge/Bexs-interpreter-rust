@@ -567,7 +567,11 @@ fn main() {
             let mut parser = parse::Parser::new(tokens);
             let mut statments = parser.stmtParser();
             let mut interpreter = Interpreter::new(statments);
-            interpreter.interpret();
+            let error = interpreter.interpret();
+            match error {
+                Ok(_a) => {}
+                Err(e) => exit(e.exit),
+            }
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();

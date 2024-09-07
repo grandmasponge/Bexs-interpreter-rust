@@ -1,4 +1,7 @@
-use crate::{eval::Evaluator, smnt::Statment};
+use crate::{
+    eval::{Evaluator, RuntimeError},
+    smnt::Statment,
+};
 
 pub struct Interpreter {
     statements: Vec<Statment>,
@@ -13,15 +16,23 @@ impl Interpreter {
         }
     }
 
-    pub fn interpret(&self) {
+    pub fn interpret(&self) -> Result<(), RuntimeError> {
         for statments in &self.statements {
             match statments {
                 Statment::PrintStmt(Expr) => {
-                    let value = Evaluator::Evaluate(Expr).unwrap();
-                    println!("{value}");
+                    let value = Evaluator::Evaluate(Expr);
+                    match value {
+                        Ok(val) => {
+                            println!("{val}")
+                        }
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    }
                 }
                 Statment::ExprStmt(Expr) => {}
             }
         }
+        Ok(())
     }
 }
