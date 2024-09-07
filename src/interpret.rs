@@ -1,6 +1,5 @@
 use crate::{
-    eval::{Evaluator, RuntimeError},
-    smnt::Statment,
+    eval::{Evaluator, RuntimeError}, expr::Expr, smnt::Statment
 };
 
 pub struct Interpreter {
@@ -19,8 +18,8 @@ impl Interpreter {
     pub fn interpret(&self) -> Result<(), RuntimeError> {
         for statments in &self.statements {
             match statments {
-                Statment::PrintStmt(Expr) => {
-                    let value = Evaluator::Evaluate(Expr);
+                Statment::PrintStmt(expr) => {
+                    let value = Evaluator::evaluate(expr);
                     match value {
                         Ok(val) => {
                             println!("{val}")
@@ -30,8 +29,8 @@ impl Interpreter {
                         }
                     }
                 }
-                Statment::ExprStmt(Expr) => {
-                    let value = Evaluator::Evaluate(Expr);
+                Statment::ExprStmt(expr) => {
+                    let value = Evaluator::evaluate(expr);
 
                     match value {
                         Ok(val) => {}

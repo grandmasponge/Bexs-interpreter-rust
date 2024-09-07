@@ -77,7 +77,7 @@ impl Lexer {
                     let mut peeker = characters.clone().peekable();
                     if peeker.next() == Some('=') {
                         tokens.push(Token::newToken(
-                            TokenType::EQUAL_EQUAL,
+                            TokenType::EqualEqual,
                             "==".to_string(),
                             None,
                         ));
@@ -90,7 +90,7 @@ impl Lexer {
                     let mut peeker = characters.clone().peekable();
                     if peeker.next() == Some('=') {
                         tokens.push(Token::newToken(
-                            TokenType::Bang_EQUAL,
+                            TokenType::BangEqual,
                             "!=".to_string(),
                             None,
                         ));
@@ -103,7 +103,7 @@ impl Lexer {
                     let mut peeker = characters.clone().peekable();
                     if peeker.next() == Some('=') {
                         tokens.push(Token::newToken(
-                            TokenType::LessThan_EQUALS,
+                            TokenType::LessThanEquals,
                             "<=".to_string(),
                             None,
                         ));
@@ -116,7 +116,7 @@ impl Lexer {
                     let mut peeker = characters.clone().peekable();
                     if peeker.next() == Some('=') {
                         tokens.push(Token::newToken(
-                            TokenType::GreaterThan_EQUALS,
+                            TokenType::GreaterThanEquals,
                             ">=".to_string(),
                             None,
                         ));
@@ -379,11 +379,11 @@ pub enum TokenType {
     Plus,
     SemiColon,
     Bang,
-    Bang_EQUAL,
+    BangEqual,
     LessThan,
-    LessThan_EQUALS,
+    LessThanEquals,
     GreaterThan,
-    GreaterThan_EQUALS,
+    GreaterThanEquals,
     Slash,
     String,
     Number,
@@ -406,7 +406,7 @@ pub enum TokenType {
     While,
     EOF,
     EQUAL,
-    EQUAL_EQUAL,
+    EqualEqual,
     NewLine,
 }
 
@@ -447,12 +447,12 @@ impl std::fmt::Display for TokenType {
             TokenType::SemiColon => write!(f, "SEMICOLON"),
             TokenType::Star => write!(f, "STAR"),
             TokenType::EQUAL => write!(f, "EQUAL"),
-            TokenType::EQUAL_EQUAL => write!(f, "EQUAL_EQUAL"),
+            TokenType::EqualEqual => write!(f, "EQUAL_EQUAL"),
             TokenType::Bang => write!(f, "BANG"),
-            TokenType::Bang_EQUAL => write!(f, "BANG_EQUAL"),
+            TokenType::BangEqual => write!(f, "BANG_EQUAL"),
             TokenType::GreaterThan => write!(f, "GREATER"),
-            TokenType::GreaterThan_EQUALS => write!(f, "GREATER_EQUAL"),
-            TokenType::LessThan_EQUALS => write!(f, "LESS_EQUAL"),
+            TokenType::GreaterThanEquals => write!(f, "GREATER_EQUAL"),
+            TokenType::LessThanEquals => write!(f, "LESS_EQUAL"),
             TokenType::LessThan => write!(f, "LESS"),
             TokenType::Slash => write!(f, "SLASH"),
             TokenType::String => write!(f, "STRING"),
@@ -493,7 +493,7 @@ fn main() {
         writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
         String::new()
     });
-    file_contents.replace("\n", "/r");
+
 
     match command.as_str() {
         "tokenize" => {
@@ -521,7 +521,7 @@ fn main() {
                 .tokens
                 .push(Token::newToken(TokenType::EOF, "".to_string(), None));
 
-            let mut tokens = lexer.tokens.clone();
+            let tokens = lexer.tokens.clone();
 
             let mut parser = parse::Parser::new(tokens.clone());
 
@@ -546,12 +546,12 @@ fn main() {
                 .tokens
                 .push(Token::newToken(TokenType::EOF, "".to_string(), None));
 
-            let mut tokens = lexer.tokens.clone();
+            let tokens = lexer.tokens.clone();
 
             let mut parser = parse::Parser::new(tokens.clone());
 
             let expr = parser.parse().unwrap();
-            let eval = Evaluator::Evaluate(&expr);
+            let eval = Evaluator::evaluate(&expr);
             match eval {
                 Ok(out) => {
                     println!("{}", out)
@@ -566,7 +566,7 @@ fn main() {
         "run" => {
             let mut file_contents = file_contents.chars().peekable();
             let mut lexer = Lexer::new();
-            let mut result = lexer.tokenize(&mut file_contents);
+            let result = lexer.tokenize(&mut file_contents);
             if result == 65 {
                 exit(65);
             }
@@ -575,20 +575,20 @@ fn main() {
                 .push(Token::newToken(TokenType::EOF, "".to_string(), None));
             let tokens = lexer.tokens.clone();
             let mut parser = parse::Parser::new(tokens);
-            let statments = parser.stmtParser();
-            let mut statments = match statments {
+            let statments = parser.stmt_parser();
+            let statments = match statments {
                 Ok(s) => s,
                 Err(e) => {
-                    writeln!(stderr(), "{e}");
+                    writeln!(stderr(), "{e}").unwrap();
                     exit(e.code);
                 }
             };
-            let mut interpreter = Interpreter::new(statments);
+            let interpreter = Interpreter::new(statments);
             let _error = interpreter.interpret();
             match _error {
                 Ok(_a) => {}
                 Err(e) => {
-                    writeln!(stderr(), "{}", e.msg);
+                    writeln!(stderr(), "{}", e.msg).unwrap();
                     exit(e.exit)
                 }
             }

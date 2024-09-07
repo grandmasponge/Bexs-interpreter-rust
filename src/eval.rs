@@ -1,11 +1,9 @@
 use core::fmt;
-use std::collections::btree_map::Values;
-use std::ops::Deref;
 
 use crate::expr::Expr;
 use crate::expr::ExprLiteral;
 use crate::Token;
-use crate::TokenType;
+
 pub struct Evaluator;
 
 pub enum Value {
@@ -50,10 +48,10 @@ impl std::fmt::Display for Value {
 }
 
 impl Evaluator {
-    pub fn Evaluate(expr: &Expr) -> Result<Value, RuntimeError> {
+    pub fn evaluate(expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
             Expr::Literal(v) => Ok(Self::EvaluateLiteral(&v)),
-            Expr::Grouping(expr) => Self::Evaluate(expr),
+            Expr::Grouping(expr) => Self::evaluate(expr),
             Expr::Unary(op, expr) => Self::EvalUnary(op, expr),
             Expr::Binary(op, left, right) => Self::EvalBinary(op, left, right),
             _ => unreachable!(),
@@ -65,8 +63,8 @@ impl Evaluator {
         left: &Box<Expr>,
         right: &Box<Expr>,
     ) -> Result<Value, RuntimeError> {
-        let left = Self::Evaluate(left)?;
-        let right = Self::Evaluate(right)?;
+        let left = Self::evaluate(left)?;
+        let right = Self::evaluate(right)?;
 
         match op._string.as_str() {
             "*" => {
@@ -253,7 +251,7 @@ impl Evaluator {
     }
 
     pub fn EvalUnary(op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
-        let right = Self::Evaluate(expr)?;
+        let right = Self::evaluate(expr)?;
         match op._string.as_str() {
             "-" => {
                 if let Value::Number(n) = right {
