@@ -529,7 +529,7 @@ fn main() {
                 Ok(tehe) => println!("{tehe}"),
                 Err(e) => {
                     result = 65;
-                    println!("{e}")
+                    writeln!(stderr(), "{e}");
                 }
             };
             exit(result);
