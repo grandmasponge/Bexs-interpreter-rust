@@ -32,8 +32,11 @@ impl Interpreter {
                 }
                 Statment::ExprStmt(Expr) => {
                     let value = Evaluator::Evaluate(Expr);
+
                     match value {
-                        Ok(val) => {}
+                        Ok(val) => {
+                            println!("wheeee");
+                        }
                         Err(e) => {
                             return Err(e);
                         }
