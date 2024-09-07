@@ -16,7 +16,7 @@ pub enum Value {
 }
 #[derive(Debug)]
 pub struct RuntimeError {
-    msg: String,
+    pub msg: String,
     //for now set line to juss 1
     line: u32,
     pub exit: i32,

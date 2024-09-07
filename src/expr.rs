@@ -39,8 +39,8 @@ impl std::fmt::Display for Expr {
 }
 #[derive(Debug)]
 pub struct ExprError {
-    msg: String,
-    code: i32,
+    pub msg: String,
+    pub code: i32,
 }
 
 impl ExprError {

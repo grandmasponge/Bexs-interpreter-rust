@@ -565,12 +565,22 @@ fn main() {
                 .push(Token::newToken(TokenType::EOF, "".to_string(), None));
             let tokens = lexer.tokens.clone();
             let mut parser = parse::Parser::new(tokens);
-            let mut statments = parser.stmtParser();
+            let statments = parser.stmtParser();
+            let mut statments = match statments {
+                Ok(s) => s,
+                Err(e) => {
+                    writeln!(stderr(), "{e}");
+                    exit(e.code);
+                }
+            };
             let mut interpreter = Interpreter::new(statments);
-            let error = interpreter.interpret();
-            match error {
+            let _error = interpreter.interpret();
+            match _error {
                 Ok(_a) => {}
-                Err(e) => exit(e.exit),
+                Err(e) => {
+                    writeln!(stderr(), "{}", e.msg);
+                    exit(e.exit)
+                }
             }
         }
         _ => {

@@ -22,40 +22,40 @@ impl Parser {
         }
     }
 
-    pub fn stmtParser(&mut self) -> Vec<Statment> {
+    pub fn stmtParser(&mut self) -> Result<Vec<Statment>, ExprError> {
         let mut statments = Vec::new();
         let mut index = 0;
         while !self.IsAtEnd() {
-            statments.insert(index, self.statement());
+            statments.insert(index, self.statement()?);
             index += 1;
         }
-        return statments;
+        return Ok(statments);
     }
 
-    pub fn statement(&mut self) -> Statment {
+    pub fn statement(&mut self) -> Result<Statment, ExprError> {
         if self.matchexpr(&[TokenType::Print]) {
             return self.printStatment();
         }
         return self.ExprStatment();
     }
 
-    pub fn ExprStatment(&mut self) -> Statment {
-        let expr = self.parse().unwrap();
+    pub fn ExprStatment(&mut self) -> Result<Statment, ExprError> {
+        let expr = self.parse()?;
         if self.matchexpr(&[TokenType::SemiColon]) {
-            return Statment::ExprStmt(expr); // somthing
+            return Ok(Statment::ExprStmt(expr)); // somthing
         } else {
             //return error
-            return Statment::ExprStmt(expr);
+            return Ok(Statment::ExprStmt(expr));
         }
     }
 
-    pub fn printStatment(&mut self) -> Statment {
-        let expr = self.parse().unwrap();
+    pub fn printStatment(&mut self) -> Result<Statment, ExprError> {
+        let expr = self.parse()?;
         if self.matchexpr(&[TokenType::SemiColon]) {
-            return Statment::PrintStmt(expr); // somthing
+            return Ok(Statment::PrintStmt(expr)); // somthing
         } else {
             //return error
-            return Statment::PrintStmt(expr);
+            return Ok(Statment::PrintStmt(expr));
         }
     }
 
