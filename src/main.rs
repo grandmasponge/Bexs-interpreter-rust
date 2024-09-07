@@ -8,10 +8,13 @@ use std::iter::Peekable;
 use std::process::exit;
 
 use eval::Evaluator;
+use interpret::Interpreter;
 
 mod eval;
 mod expr;
+mod interpret;
 mod parse;
+mod smnt;
 
 struct Lexer {
     line: i32,
@@ -549,6 +552,22 @@ fn main() {
                 }
             }
             exit(result);
+        }
+        "run" => {
+            let mut file_contents = file_contents.chars().peekable();
+            let mut lexer = Lexer::new();
+            let mut result = lexer.tokenize(&mut file_contents);
+            if result == 65 {
+                exit(65);
+            }
+            lexer
+                .tokens
+                .push(Token::newToken(TokenType::EOF, "".to_string(), None));
+            let tokens = lexer.tokens.clone();
+            let mut parser = parse::Parser::new(tokens);
+            let mut statments = parser.stmtParser();
+            let mut interpreter = Interpreter::new(statments);
+            interpreter.interpret();
         }
         _ => {
             writeln!(io::stderr(), "Unknown command: {}", command).unwrap();

@@ -3,6 +3,7 @@ use anyhow::Result;
 use crate::expr::Expr;
 use crate::expr::ExprError;
 use crate::expr::ExprLiteral;
+use crate::smnt::Statment;
 use crate::Token;
 use crate::TokenType;
 use std::iter::Peekable;
@@ -18,6 +19,42 @@ impl Parser {
             index: 0,
             Tokens: tokens,
             expr: Vec::new(),
+        }
+    }
+
+    pub fn stmtParser(&mut self) -> Vec<Statment> {
+        let mut statments = Vec::new();
+        let mut index = 0;
+        while !self.IsAtEnd() {
+            statments.insert(index, self.statement());
+        }
+        return statments;
+    }
+
+    pub fn statement(&mut self) -> Statment {
+        if self.matchexpr(&[TokenType::Print]) {
+            return self.printStatment();
+        }
+        return self.ExprStatment();
+    }
+
+    pub fn ExprStatment(&mut self) -> Statment {
+        let expr = self.parse().unwrap();
+        if self.matchexpr(&[TokenType::SemiColon]) {
+            return Statment::ExprStmt(expr); // somthing
+        } else {
+            //return error
+            return Statment::ExprStmt(expr);
+        }
+    }
+
+    pub fn printStatment(&mut self) -> Statment {
+        let expr = self.parse().unwrap();
+        if self.matchexpr(&[TokenType::SemiColon]) {
+            return Statment::PrintStmt(expr); // somthing
+        } else {
+            //return error
+            return Statment::PrintStmt(expr);
         }
     }
 
@@ -141,6 +178,13 @@ impl Parser {
 
     pub fn advance(&mut self) {
         self.index += 1
+    }
+
+    pub fn IsAtEnd(&mut self) -> bool {
+        if self.peek()._type == TokenType::EOF {
+            return true;
+        }
+        false
     }
 
     pub fn peek(&self) -> &Token {
