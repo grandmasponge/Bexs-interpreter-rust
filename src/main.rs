@@ -158,10 +158,19 @@ impl Lexer {
                     let mut value = Vec::new();
                     while let Some(char) = characters.next() {
                         match char {
-                            '\n' => self.line += 1,
+                            '\\' => {
+                                if characters.peek().unwrap() == &'n' {
+                                    characters.next();
+                                    value.push('\n');
+                                    self.line += 1;
+                                } else {
+                                    value.push('\\');
+                                }
+                            }
                             '"' => {
                                 error = false;
                                 let inner = value.iter().collect::<String>();
+
                                 tokens.push(Token::newToken(
                                     TokenType::String,
                                     format!("\"{}\"", inner),
@@ -484,6 +493,7 @@ fn main() {
         writeln!(io::stderr(), "Failed to read file {}", filename).unwrap();
         String::new()
     });
+    file_contents.replace("\n", "/r");
 
     match command.as_str() {
         "tokenize" => {
