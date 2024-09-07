@@ -494,7 +494,6 @@ fn main() {
         String::new()
     });
 
-
     match command.as_str() {
         "tokenize" => {
             // You can use print statements as follows for debugging, they'll be visible when running tests.
