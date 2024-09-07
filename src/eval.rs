@@ -240,7 +240,7 @@ impl Evaluator {
                         if let Value::String(r) = right {
                             rhs = r;
                         } else {
-                            Ok(Value::Bool(false));
+                            return Ok(Value::Bool(false));
                         }
                         Ok(Value::Bool((lhs != rhs)))
                     } else {
