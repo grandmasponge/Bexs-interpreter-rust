@@ -1,2 +1,1 @@
-print "hello" + " world";
-print "i want food";
+print true == false;
