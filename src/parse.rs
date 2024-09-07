@@ -1,5 +1,3 @@
-use anyhow::Result;
-
 use crate::expr::Expr;
 use crate::expr::ExprError;
 use crate::expr::ExprLiteral;
@@ -45,7 +43,7 @@ impl Parser {
             return Ok(Statment::ExprStmt(expr)); // somthing
         } else {
             //return error
-            return Ok(Statment::ExprStmt(expr));
+            return Err(ExprError::new("tehe".to_string(), 100));
         }
     }
 
