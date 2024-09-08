@@ -62,7 +62,7 @@ impl Evaluator {
     }
     pub fn evaluate(&self, expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
-            Expr::Literal(v) => Ok(Self::EvaluateLiteral(self, &v)),
+            Expr::Literal(v) => Ok(Self::EvaluateLiteral(self, &v)?),
             Expr::Grouping(expr) => Self::evaluate(self, expr),
             Expr::Unary(op, expr) => Self::EvalUnary(self, op, expr),
             Expr::Binary(op, left, right) => Self::EvalBinary(self, op, left, right),
@@ -347,19 +347,25 @@ impl Evaluator {
         }
     }
 
-    pub fn EvaluateLiteral(&self, literal: &ExprLiteral) -> Value {
+    pub fn EvaluateLiteral(&self, literal: &ExprLiteral) -> Result<Value, RuntimeError> {
         match literal {
-            ExprLiteral::Bool(truthy) => Value::Bool(*truthy),
-            ExprLiteral::String(Stringy) => Value::String(Stringy.to_owned()),
+            ExprLiteral::Bool(truthy) => Ok(Value::Bool(*truthy)),
+            ExprLiteral::String(Stringy) => Ok(Value::String(Stringy.to_owned())),
             ExprLiteral::Number(numy) => {
                 let f32 = numy.parse::<f32>().unwrap();
-                Value::Number(f32)
+                Ok(Value::Number(f32))
             }
             ExprLiteral::Identifier(str) => {
-                let val = self.symbols.get(str).unwrap();
-                val.clone()
+                let val = self.symbols.get(str);
+                if val.is_none() {
+                    return Err(RuntimeError::new(
+                        format!("Undefined variable '{}'.", str),
+                        self.line,
+                    ));
+                }
+                Ok(val.unwrap().clone())
             }
-            ExprLiteral::Nil => Value::Nil,
+            ExprLiteral::Nil => Ok(Value::Nil),
         }
     }
 }
