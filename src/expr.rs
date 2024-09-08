@@ -1,5 +1,6 @@
 use crate::Token;
 
+#[derive(Debug)]
 pub enum ExprLiteral {
     Number(String),
     String(String),
@@ -22,6 +23,7 @@ impl std::fmt::Display for ExprLiteral {
     }
 }
 
+#[derive(Debug)]
 pub enum Expr {
     Literal(ExprLiteral),
     Grouping(Box<Expr>),

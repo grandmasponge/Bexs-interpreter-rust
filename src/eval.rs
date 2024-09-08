@@ -1,8 +1,10 @@
 use core::fmt;
+use std::clone;
 use std::collections::HashMap;
 use std::ops::Deref;
 
 use crate::expr::Expr;
+use crate::expr::ExprError;
 use crate::expr::ExprLiteral;
 use crate::Token;
 
@@ -60,24 +62,45 @@ impl Evaluator {
             symbols: HashMap::new(),
         }
     }
+
+    pub fn assign(&mut self, name: &String, right: Value) -> Result<Value, RuntimeError> {
+        if self.symbols.contains_key(name) {
+            self.symbols.insert(name.clone(), right.clone());
+            Ok(right)
+        } else {
+            Err(RuntimeError::new(
+                format!("invalid use of undeclared indentifier {right}"),
+                self.line,
+            ))
+        }
+    }
+
     pub fn evaluate(&mut self, expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
             Expr::Literal(v) => Ok(Self::EvaluateLiteral(self, &v)?),
             Expr::Grouping(expr) => Self::evaluate(self, expr),
             Expr::Unary(op, expr) => Self::EvalUnary(self, op, expr),
             Expr::Assignment(left, right) => {
-                let left = left.deref();
-                let right = self.evaluate(right)?;
-                let value = if let Expr::Literal(ExprLiteral::Identifier(name)) = left {
-                    name
-                } else {
-                    return Err(RuntimeError::new(
-                        "must use assingment operater with identifier".to_string(),
-                        self.line,
-                    ));
-                };
-                self.symbols.insert(value.clone(), right.clone());
-                Ok(right)
+                // `left` should be an identifier, so we expect an ExprLiteral::Identifier.
+            // Make sure the left side is a valid identifier.
+            if let Expr::Literal(ExprLiteral::Identifier(ref name)) = **left {
+                // Evaluate the right-hand expression.
+                let value = self.evaluate(right)?;
+                
+                // Now assign the evaluated value to the identifier in `symbols`.
+                self.assign(name, value.clone())?;
+                
+                // Return the assigned value.
+                Ok(value)
+            } else {
+                // If the left-hand side is not an identifier, return an error.
+                Err(RuntimeError::new(
+                    String::from("Invalid assignment target. Left-hand side must be an identifier."),
+                    self.line,
+                ))
+    }
+               
+                
             }
             Expr::Binary(op, left, right) => Self::EvalBinary(self, op, left, right),
             _ => unreachable!(),

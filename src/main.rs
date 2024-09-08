@@ -340,7 +340,7 @@ impl Lexer {
         exitcode
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Token {
     _type: TokenType,
     _string: String,
@@ -366,7 +366,7 @@ impl Token {
         }
     }
 }
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum TokenType {
     LeftParen,
     RightParen,

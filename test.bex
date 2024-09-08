@@ -1,3 +1,6 @@
-hello = 1;
+var hello;
+var world;
 
-print hello;
+hello = world = "wow";
+
+print world;

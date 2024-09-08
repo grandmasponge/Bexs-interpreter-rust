@@ -91,11 +91,19 @@ impl Parser {
     }
 
     pub fn assignment(&mut self) -> Result<Expr, ExprError> {
-        let mut expr = self.equality()?;
-        while self.matchexpr(&[TokenType::EQUAL]) {
-            let right = self.equality()?;
-            expr = Expr::Assignment(Box::new(expr), Box::new(right));
+        let expr = self.equality()?;
+    
+        // Check if the next token is an EQUAL
+        if self.matchexpr(&[TokenType::EQUAL]) {
+            // Ensure the left-hand side is a valid assignment target (e.g., Identifier)
+            if let Expr::Literal(ExprLiteral::Identifier(_)) = expr {
+                let value = self.assignment()?; // Evaluate the right-hand side
+                return Ok(Expr::Assignment(Box::new(expr), Box::new(value)));
+            } else {
+                return Err(ExprError::new("Invalid assignment target".to_string(), 100));
+            }
         }
+
         Ok(expr)
     }
 
