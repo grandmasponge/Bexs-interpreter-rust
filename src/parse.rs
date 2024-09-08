@@ -1,3 +1,5 @@
+use anyhow::Error;
+
 use crate::expr::{Expr, ExprError, ExprLiteral};
 use crate::smnt::Statment;
 use crate::Token;
@@ -27,10 +29,42 @@ impl Parser {
     }
 
     pub fn statement(&mut self) -> Result<Statment, ExprError> {
-        if self.matchexpr(&[TokenType::Print]) {
+        if self.matchexpr(&[TokenType::Var]) {
+            //then it is a declaration :3
+            self.var_decloration()
+        } else if self.matchexpr(&[TokenType::Print]) {
             self.print_statment()
         } else {
             self.expr_statment()
+        }
+    }
+
+    pub fn var_decloration(&mut self) -> Result<Statment, ExprError> {
+        let identifier = self.parse()?;
+        //should actually check if it is of identifier type
+        if let Expr::Literal(ExprLiteral::Identifier(value)) = &identifier {
+        } else {
+            return Err(ExprError::new("expected an identifier".to_string(), 100));
+        }
+
+        //
+        if self.matchexpr(&[TokenType::SemiColon]) {
+            // then set it to nil
+            return Ok(Statment::VarDec(
+                identifier,
+                Expr::Literal(ExprLiteral::Nil),
+            ));
+        } else if self.matchexpr(&[TokenType::EQUAL]) {
+            // then set it to that expression
+            let expr = self.parse()?;
+            if self.matchexpr(&[TokenType::SemiColon]) {
+                // return ok
+                return Ok(Statment::VarDec(identifier, expr));
+            } else {
+                return Err(ExprError::new("SemiColon expected".to_string(), 100));
+            }
+        } else {
+            return Err(ExprError::new("Unexpected token".to_string(), 100));
         }
     }
 
@@ -112,10 +146,17 @@ impl Parser {
     }
 
     pub fn primary(&mut self) -> Result<Expr, ExprError> {
-        let current = self.tokens.get(self.index).ok_or_else(|| {
-            ExprError::new("Unexpected end of input".to_string(), 65)
-        })?;
+        let current = self
+            .tokens
+            .get(self.index)
+            .ok_or_else(|| ExprError::new("Unexpected end of input".to_string(), 65))?;
         match current._type {
+            TokenType::Identifer => {
+                let identifer_string = current._string.clone();
+
+                self.advance();
+                Ok(Expr::Literal(ExprLiteral::Identifier(identifer_string)))
+            }
             TokenType::True => {
                 self.advance();
                 Ok(Expr::Literal(ExprLiteral::Bool(true)))
@@ -129,16 +170,18 @@ impl Parser {
                 Ok(Expr::Literal(ExprLiteral::Nil))
             }
             TokenType::String => {
-                let value = current._value.as_ref().ok_or_else(|| {
-                    ExprError::new("Expected string value".to_string(), 65)
-                })?.clone();
+                let value = current
+                    ._value
+                    .clone()
+                    .ok_or_else(|| ExprError::new("Expected string value".to_string(), 65))?;
                 self.advance();
                 Ok(Expr::Literal(ExprLiteral::String(value)))
             }
             TokenType::Number => {
-                let value = current._value.as_ref().ok_or_else(|| {
-                    ExprError::new("Expected number value".to_string(), 65)
-                })?.clone();
+                let value = current
+                    ._value
+                    .clone()
+                    .ok_or_else(|| ExprError::new("Expected number value".to_string(), 65))?;
                 self.advance();
                 Ok(Expr::Literal(ExprLiteral::Number(value)))
             }
@@ -181,10 +224,15 @@ impl Parser {
     }
 
     pub fn peek(&self) -> &Token {
-        self.tokens.get(self.index).expect("Unexpected end of input")
+        self.tokens
+            .get(self.index)
+            .expect("Unexpected end of input")
     }
 
     pub fn prev(&self) -> &Token {
-        self.tokens.get(self.index.saturating_sub(1)).expect("No previous token")
+        self.tokens
+            .get(self.index.saturating_sub(1))
+            .expect("No previous token")
     }
 }
+

@@ -4,6 +4,7 @@ pub enum ExprLiteral {
     Number(String),
     String(String),
     Bool(bool),
+    Identifier(String),
     Nil,
 }
 
@@ -14,6 +15,7 @@ impl std::fmt::Display for ExprLiteral {
             ExprLiteral::String(str) => {
                 write!(f, "{str}")
             }
+            ExprLiteral::Identifier(str) => write!(f, "{str}"),
             ExprLiteral::Nil => write!(f, "nil"),
             ExprLiteral::Bool(bool) => write!(f, "{bool}"),
         }

@@ -550,7 +550,8 @@ fn main() {
             let mut parser = parse::Parser::new(tokens.clone());
 
             let expr = parser.parse().unwrap();
-            let eval = Evaluator::evaluate(&expr);
+            let evaluator = Evaluator::new();
+            let eval = evaluator.evaluate(&expr);
             match eval {
                 Ok(out) => {
                     println!("{}", out)
@@ -582,7 +583,7 @@ fn main() {
                     exit(e.code);
                 }
             };
-            let interpreter = Interpreter::new(statments);
+            let mut interpreter = Interpreter::new(statments);
             let _error = interpreter.interpret();
             match _error {
                 Ok(_a) => {}

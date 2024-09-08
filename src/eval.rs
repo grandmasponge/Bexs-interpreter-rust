@@ -1,11 +1,17 @@
 use core::fmt;
+use std::collections::HashMap;
+use std::ops::Deref;
 
 use crate::expr::Expr;
 use crate::expr::ExprLiteral;
 use crate::Token;
 
-pub struct Evaluator;
+pub struct Evaluator {
+    pub line: u32,
+    pub symbols: HashMap<String, Value>,
+}
 
+#[derive(Debug, Clone)]
 pub enum Value {
     String(String),
     Number(f32),
@@ -16,15 +22,15 @@ pub enum Value {
 pub struct RuntimeError {
     pub msg: String,
     //for now set line to juss 1
-    line: u32,
+    pub line: u32,
     pub exit: i32,
 }
 
 impl RuntimeError {
-    fn new(msg: String) -> Self {
+    pub fn new(msg: String, line: u32) -> Self {
         Self {
             msg,
-            line: 1,
+            line,
             exit: 70,
         }
     }
@@ -48,23 +54,30 @@ impl std::fmt::Display for Value {
 }
 
 impl Evaluator {
-    pub fn evaluate(expr: &Expr) -> Result<Value, RuntimeError> {
+    pub fn new() -> Self {
+        Self {
+            line: 0,
+            symbols: HashMap::new(),
+        }
+    }
+    pub fn evaluate(&self, expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
-            Expr::Literal(v) => Ok(Self::EvaluateLiteral(&v)),
-            Expr::Grouping(expr) => Self::evaluate(expr),
-            Expr::Unary(op, expr) => Self::EvalUnary(op, expr),
-            Expr::Binary(op, left, right) => Self::EvalBinary(op, left, right),
+            Expr::Literal(v) => Ok(Self::EvaluateLiteral(self, &v)),
+            Expr::Grouping(expr) => Self::evaluate(self, expr),
+            Expr::Unary(op, expr) => Self::EvalUnary(self, op, expr),
+            Expr::Binary(op, left, right) => Self::EvalBinary(self, op, left, right),
             _ => unreachable!(),
         }
     }
 
     pub fn EvalBinary(
+        &self,
         op: &Token,
         left: &Box<Expr>,
         right: &Box<Expr>,
     ) -> Result<Value, RuntimeError> {
-        let left = Self::evaluate(left)?;
-        let right = Self::evaluate(right)?;
+        let left = Self::evaluate(self, left)?;
+        let right = Self::evaluate(self, right)?;
 
         match op._string.as_str() {
             "*" => {
@@ -73,11 +86,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Number(lhs * rhs));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             "/" => {
@@ -86,11 +105,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Number(lhs / rhs));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             "+" => {
@@ -99,7 +124,10 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Number(lhs + rhs));
                 } else {
@@ -108,13 +136,17 @@ impl Evaluator {
                         if let Value::String(r) = right {
                             rhs = r;
                         } else {
-                            return Err(RuntimeError::new(String::from(
-                                "Operands must be numbers.",
-                            )));
+                            return Err(RuntimeError::new(
+                                String::from("Operands must be numbers."),
+                                self.line,
+                            ));
                         }
                         Ok(Value::String(format!("{}{}", lhs, rhs)))
                     } else {
-                        Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                        Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ))
                     }
                 }
             }
@@ -124,11 +156,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Number(lhs - rhs));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             "<" => {
@@ -137,11 +175,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Bool((lhs < rhs)));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             ">" => {
@@ -150,11 +194,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Bool((lhs > rhs)));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             ">=" => {
@@ -163,11 +213,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Bool((lhs >= rhs)));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             "<=" => {
@@ -176,11 +232,17 @@ impl Evaluator {
                     if let Value::Number(r) = right {
                         rhs = r;
                     } else {
-                        return Err(RuntimeError::new(String::from("Operands must be numbers.")));
+                        return Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ));
                     }
                     return Ok(Value::Bool((lhs <= rhs)));
                 } else {
-                    Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                    Err(RuntimeError::new(
+                        String::from("Operands must be numbers."),
+                        self.line,
+                    ))
                 }
             }
             "==" => {
@@ -210,7 +272,10 @@ impl Evaluator {
                         }
                         Ok(Value::Bool((lhs == rhs)))
                     } else {
-                        Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                        Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ))
                     }
                 }
             }
@@ -242,7 +307,10 @@ impl Evaluator {
                         }
                         Ok(Value::Bool((lhs != rhs)))
                     } else {
-                        Err(RuntimeError::new(String::from("Operands must be numbers.")))
+                        Err(RuntimeError::new(
+                            String::from("Operands must be numbers."),
+                            self.line,
+                        ))
                     }
                 }
             }
@@ -250,16 +318,17 @@ impl Evaluator {
         }
     }
 
-    pub fn EvalUnary(op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
-        let right = Self::evaluate(expr)?;
+    pub fn EvalUnary(&self, op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
+        let right = Self::evaluate(self, expr)?;
         match op._string.as_str() {
             "-" => {
                 if let Value::Number(n) = right {
                     Ok(Value::Number(-n))
                 } else {
-                    Err(RuntimeError::new(String::from(
-                        "Operand must be an number.",
-                    )))
+                    Err(RuntimeError::new(
+                        String::from("Operand must be an number."),
+                        self.line,
+                    ))
                 }
             }
             "!" => match right {
@@ -278,13 +347,17 @@ impl Evaluator {
         }
     }
 
-    pub fn EvaluateLiteral(literal: &ExprLiteral) -> Value {
+    pub fn EvaluateLiteral(&self, literal: &ExprLiteral) -> Value {
         match literal {
             ExprLiteral::Bool(truthy) => Value::Bool(*truthy),
             ExprLiteral::String(Stringy) => Value::String(Stringy.to_owned()),
             ExprLiteral::Number(numy) => {
                 let f32 = numy.parse::<f32>().unwrap();
                 Value::Number(f32)
+            }
+            ExprLiteral::Identifier(str) => {
+                let val = self.symbols.get(str).unwrap();
+                val.clone()
             }
             ExprLiteral::Nil => Value::Nil,
         }
