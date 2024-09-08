@@ -40,7 +40,7 @@ impl Parser {
     }
 
     pub fn var_decloration(&mut self) -> Result<Statment, ExprError> {
-        let identifier = self.parse()?;
+        let identifier = self.equality()?;
         //should actually check if it is of identifier type
         if let Expr::Literal(ExprLiteral::Identifier(value)) = &identifier {
         } else {
@@ -87,7 +87,16 @@ impl Parser {
     }
 
     pub fn parse(&mut self) -> Result<Expr, ExprError> {
-        self.equality()
+        self.assignment()
+    }
+
+    pub fn assignment(&mut self) -> Result<Expr, ExprError> {
+        let mut expr = self.equality()?;
+        while self.matchexpr(&[TokenType::EQUAL]) {
+            let right = self.equality()?;
+            expr = Expr::Assignment(Box::new(expr), Box::new(right));
+        }
+        Ok(expr)
     }
 
     pub fn equality(&mut self) -> Result<Expr, ExprError> {
@@ -235,4 +244,3 @@ impl Parser {
             .expect("No previous token")
     }
 }
-

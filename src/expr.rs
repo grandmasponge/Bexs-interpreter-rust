@@ -27,6 +27,7 @@ pub enum Expr {
     Grouping(Box<Expr>),
     Unary(Token, Box<Expr>),
     Binary(Token, Box<Expr>, Box<Expr>),
+    Assignment(Box<Expr>, Box<Expr>),
 }
 
 impl std::fmt::Display for Expr {
@@ -38,6 +39,7 @@ impl std::fmt::Display for Expr {
             Expr::Binary(operator, left, right) => {
                 write!(f, "({} {} {})", operator._string, *left, *right)
             }
+            Expr::Assignment(name, expr) => write!(f, "({}) = ({})", name, expr),
         }
     }
 }

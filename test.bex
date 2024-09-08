@@ -1,5 +1,3 @@
-var hello = "Hello\n";
-var world = "World";
+hello = 1;
 
-print nothing;
-print hello + world;
+print hello;

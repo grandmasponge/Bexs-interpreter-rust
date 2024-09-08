@@ -60,18 +60,32 @@ impl Evaluator {
             symbols: HashMap::new(),
         }
     }
-    pub fn evaluate(&self, expr: &Expr) -> Result<Value, RuntimeError> {
+    pub fn evaluate(&mut self, expr: &Expr) -> Result<Value, RuntimeError> {
         match expr {
             Expr::Literal(v) => Ok(Self::EvaluateLiteral(self, &v)?),
             Expr::Grouping(expr) => Self::evaluate(self, expr),
             Expr::Unary(op, expr) => Self::EvalUnary(self, op, expr),
+            Expr::Assignment(left, right) => {
+                let left = left.deref();
+                let right = self.evaluate(right)?;
+                let value = if let Expr::Literal(ExprLiteral::Identifier(name)) = left {
+                    name
+                } else {
+                    return Err(RuntimeError::new(
+                        "must use assingment operater with identifier".to_string(),
+                        self.line,
+                    ));
+                };
+                self.symbols.insert(value.clone(), right.clone());
+                Ok(right)
+            }
             Expr::Binary(op, left, right) => Self::EvalBinary(self, op, left, right),
             _ => unreachable!(),
         }
     }
 
     pub fn EvalBinary(
-        &self,
+        &mut self,
         op: &Token,
         left: &Box<Expr>,
         right: &Box<Expr>,
@@ -318,7 +332,7 @@ impl Evaluator {
         }
     }
 
-    pub fn EvalUnary(&self, op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
+    pub fn EvalUnary(&mut self, op: &Token, expr: &Box<Expr>) -> Result<Value, RuntimeError> {
         let right = Self::evaluate(self, expr)?;
         match op._string.as_str() {
             "-" => {
@@ -347,7 +361,7 @@ impl Evaluator {
         }
     }
 
-    pub fn EvaluateLiteral(&self, literal: &ExprLiteral) -> Result<Value, RuntimeError> {
+    pub fn EvaluateLiteral(&mut self, literal: &ExprLiteral) -> Result<Value, RuntimeError> {
         match literal {
             ExprLiteral::Bool(truthy) => Ok(Value::Bool(*truthy)),
             ExprLiteral::String(Stringy) => Ok(Value::String(Stringy.to_owned())),

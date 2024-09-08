@@ -550,7 +550,7 @@ fn main() {
             let mut parser = parse::Parser::new(tokens.clone());
 
             let expr = parser.parse().unwrap();
-            let evaluator = Evaluator::new();
+            let mut evaluator = Evaluator::new();
             let eval = evaluator.evaluate(&expr);
             match eval {
                 Ok(out) => {
