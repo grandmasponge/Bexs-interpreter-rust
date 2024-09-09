@@ -583,8 +583,8 @@ fn main() {
                     exit(e.code);
                 }
             };
-            let mut interpreter = Interpreter::new(statments);
-            let _error = interpreter.interpret();
+            let mut interpreter = Interpreter::new();
+            let _error = interpreter.interpret(statments);
             match _error {
                 Ok(_a) => {}
                 Err(e) => {

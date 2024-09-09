@@ -5,25 +5,23 @@ use crate::{
 };
 
 pub struct Interpreter {
-    statements: Vec<Statment>,
     evaluater: Evaluator,
     line: i32,
 }
 
 impl Interpreter {
-    pub fn new(data: Vec<Statment>) -> Self {
+    pub fn new() -> Self {
         Self {
-            statements: data,
             evaluater: Evaluator::new(),
             line: 0,
         }
     }
 
-    pub fn interpret(&mut self) -> Result<(), RuntimeError> {
-        for statments in &self.statements {
+    pub fn interpret(&mut self, statements: Vec<Statment>) -> Result<(), RuntimeError> {
+        for statments in statements {
             match statments {
                 Statment::PrintStmt(expr) => {
-                    let value = self.evaluater.evaluate(expr);
+                    let value = self.evaluater.evaluate(&expr);
                     match value {
                         Ok(val) => {
                             println!("{val}")
@@ -42,11 +40,15 @@ impl Interpreter {
                             self.evaluater.line,
                         ));
                     };
-                    let val = self.evaluater.evaluate(value)?;
+                    let val = self.evaluater.evaluate(&value)?;
                     self.evaluater.symbols.insert(variable_name, val);
                 }
+                Statment::BlockStatment(tehes) => {
+                    let mut new_enviroment = Interpreter::new();
+                    new_enviroment.interpret(tehes.as_ref().clone());
+                }
                 Statment::ExprStmt(expr) => {
-                    let value = self.evaluater.evaluate(expr);
+                    let value = self.evaluater.evaluate(&expr);
 
                     match value {
                         Ok(val) => {}

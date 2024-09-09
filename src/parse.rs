@@ -34,9 +34,19 @@ impl Parser {
             self.var_decloration()
         } else if self.matchexpr(&[TokenType::Print]) {
             self.print_statment()
+        } else if self.matchexpr(&[TokenType::LeftBrace]) {
+            self.blockexpr()
         } else {
             self.expr_statment()
         }
+    }
+
+    pub fn blockexpr(&mut self) -> Result<Statment, ExprError> {
+        let mut statments = Vec::new();
+        while self.matchexpr(&[TokenType::RightBrace]) == false {
+            statments.push(self.statement()?)
+        }
+        Ok(Statment::BlockStatment(Box::new(statments)))
     }
 
     pub fn var_decloration(&mut self) -> Result<Statment, ExprError> {
@@ -92,7 +102,7 @@ impl Parser {
 
     pub fn assignment(&mut self) -> Result<Expr, ExprError> {
         let expr = self.equality()?;
-    
+
         // Check if the next token is an EQUAL
         if self.matchexpr(&[TokenType::EQUAL]) {
             // Ensure the left-hand side is a valid assignment target (e.g., Identifier)
