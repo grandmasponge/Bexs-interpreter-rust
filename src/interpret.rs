@@ -45,7 +45,7 @@ impl Interpreter {
                 }
                 Statment::BlockStatment(tehes) => {
                     let mut new_enviroment = Interpreter::new();
-                    new_enviroment.interpret(tehes.as_ref().clone());
+                    new_enviroment.interpret(tehes.as_ref().clone())?;
                 }
                 Statment::ExprStmt(expr) => {
                     let value = self.evaluater.evaluate(&expr);
