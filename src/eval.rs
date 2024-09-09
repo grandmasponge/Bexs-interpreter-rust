@@ -8,6 +8,8 @@ use crate::expr::ExprError;
 use crate::expr::ExprLiteral;
 use crate::Token;
 
+#[derive(Clone)]
+
 pub struct Evaluator {
     pub line: u32,
     pub symbols: HashMap<String, Value>,
@@ -82,25 +84,25 @@ impl Evaluator {
             Expr::Unary(op, expr) => Self::EvalUnary(self, op, expr),
             Expr::Assignment(left, right) => {
                 // `left` should be an identifier, so we expect an ExprLiteral::Identifier.
-            // Make sure the left side is a valid identifier.
-            if let Expr::Literal(ExprLiteral::Identifier(ref name)) = **left {
-                // Evaluate the right-hand expression.
-                let value = self.evaluate(right)?;
-                
-                // Now assign the evaluated value to the identifier in `symbols`.
-                self.assign(name, value.clone())?;
-                
-                // Return the assigned value.
-                Ok(value)
-            } else {
-                // If the left-hand side is not an identifier, return an error.
-                Err(RuntimeError::new(
-                    String::from("Invalid assignment target. Left-hand side must be an identifier."),
-                    self.line,
-                ))
-    }
-               
-                
+                // Make sure the left side is a valid identifier.
+                if let Expr::Literal(ExprLiteral::Identifier(ref name)) = **left {
+                    // Evaluate the right-hand expression.
+                    let value = self.evaluate(right)?;
+
+                    // Now assign the evaluated value to the identifier in `symbols`.
+                    self.assign(name, value.clone())?;
+
+                    // Return the assigned value.
+                    Ok(value)
+                } else {
+                    // If the left-hand side is not an identifier, return an error.
+                    Err(RuntimeError::new(
+                        String::from(
+                            "Invalid assignment target. Left-hand side must be an identifier.",
+                        ),
+                        self.line,
+                    ))
+                }
             }
             Expr::Binary(op, left, right) => Self::EvalBinary(self, op, left, right),
             _ => unreachable!(),

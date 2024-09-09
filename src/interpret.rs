@@ -4,6 +4,7 @@ use crate::{
     smnt::Statment,
 };
 
+#[derive(Clone)]
 pub struct Interpreter {
     evaluater: Evaluator,
     line: i32,
@@ -44,7 +45,7 @@ impl Interpreter {
                     self.evaluater.symbols.insert(variable_name, val);
                 }
                 Statment::BlockStatment(tehes) => {
-                    let mut new_enviroment = Interpreter::new();
+                    let mut new_enviroment = self.clone();
                     new_enviroment.interpret(tehes.as_ref().clone())?;
                 }
                 Statment::ExprStmt(expr) => {
